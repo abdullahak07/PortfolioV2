@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a0a09" />
+  <meta name="description" content="Abdullah Ahmad Khan — AI researcher and university lecturer working on machine unlearning, trustworthy AI, multimodal learning and vision-language systems." />
+  <title>Abdullah Ahmad Khan — AI Researcher & Lecturer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%230a0a09%22/><text x=%2250%22 y=%2264%22 font-size=%2248%22 text-anchor=%22middle%22 fill=%22%23d9ff63%22 font-family=%22Arial%22>AK</text></svg>" />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Person",
+    "name":"Abdullah Ahmad Khan",
+    "url":"https://abdullahak07.github.io",
+    "jobTitle":"AI Researcher and University Lecturer",
+    "affiliation":[
+      {"@type":"Organization","name":"Murdoch University"},
+      {"@type":"Organization","name":"University of Notre Dame Australia"}
+    ],
+    "sameAs":[
+      "https://github.com/abdullahak07",
+      "https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en",
+      "https://www.linkedin.com/in/abdullahakhan"
+    ]
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Abdullah Ahmad Khan home">
+      <span class="brand-mark">AK</span>
+      <span class="brand-name">Abdullah Ahmad Khan</span>
+    </a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" class="nav">
+      <a href="#research">Research</a>
+      <a href="#publications">Publications</a>
+      <a href="#teaching">Teaching</a>
+      <a href="#projects">Projects</a>
+      <a href="#about">About</a>
+      <a class="nav-cta" href="cv.html">CV ↗</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero section-pad">
+      <div class="hero-kicker reveal">AI researcher · university lecturer · Perth, Australia</div>
+      <div class="hero-grid">
+        <div>
+          <h1 class="hero-title reveal">
+            Building AI systems<br />
+            that can <span class="accent-word">forget.</span><br />
+            Proving when they <em>haven’t.</em>
+          </h1>
+          <p class="hero-copy reveal">
+            I work at the intersection of <strong>machine unlearning</strong>, <strong>trustworthy AI</strong>,
+            <strong>multimodal learning</strong>, and <strong>vision-language systems</strong>—designing methods,
+            attacks, audits and evaluation frameworks for models that must remove information reliably.
+          </p>
+          <div class="hero-actions reveal">
+            <a class="button primary" href="#research">Explore research</a>
+            <a class="button ghost" href="#publications">View publications</a>
+          </div>
+        </div>
+
+        <aside class="hero-panel reveal" aria-label="Research profile">
+          <div class="portrait-wrap">
+            <img src="https://avatars.githubusercontent.com/u/53994342?v=4" alt="Abdullah Ahmad Khan" />
+            <div class="portrait-meta">
+              <span>PhD · Computer Science</span>
+              <span>Murdoch University</span>
+            </div>
+          </div>
+          <dl class="signal-list">
+            <div><dt>Core</dt><dd>Machine Unlearning</dd></div>
+            <div><dt>Systems</dt><dd>Multimodal + VLM</dd></div>
+            <div><dt>Lens</dt><dd>Privacy + Reliability</dd></div>
+            <div><dt>Also</dt><dd>AI + Cybersecurity Education</dd></div>
+          </dl>
+        </aside>
+      </div>
+
+      <div class="metric-strip reveal" aria-label="Profile highlights">
+        <div><strong>2</strong><span>Australian universities</span></div>
+        <div><strong>420+</strong><span>teaching hours / year</span></div>
+        <div><strong>200+</strong><span>students supported</span></div>
+        <div><strong>2026</strong><span>thesis finalisation</span></div>
+      </div>
+    </section>
+
+    <section id="research" class="section-pad research-section">
+      <div class="section-head reveal">
+        <span class="eyebrow">01 · Research</span>
+        <h2>Can an AI model <em>truly</em> forget?</h2>
+        <p>My PhD treats machine unlearning as more than a single optimisation problem. The central question is whether information is actually removed—and whether that claim survives privacy attacks, representation analysis and deployment-time transformations.</p>
+      </div>
+
+      <div class="research-arc">
+        <article class="arc-card reveal">
+          <span class="arc-num">01</span>
+          <h3>Remove</h3>
+          <p>Design selective forgetting methods that reduce the influence of targeted data without paying the full cost of retraining.</p>
+          <div class="tags"><span>Gradient</span><span>Hessian</span><span>Boundary</span></div>
+        </article>
+        <article class="arc-card reveal">
+          <span class="arc-num">02</span>
+          <h3>Measure</h3>
+          <p>Audit whether common forgetting, utility, privacy and representation metrics agree with an oracle retrained model.</p>
+          <div class="tags"><span>UQS</span><span>MIA</span><span>AD / JS</span></div>
+        </article>
+        <article class="arc-card reveal">
+          <span class="arc-num">03</span>
+          <h3>Attack</h3>
+          <p>Stress-test unlearned models after deployment transformations such as low-bit quantisation that may revive forgotten content.</p>
+          <div class="tags"><span>INT4</span><span>Recovery</span><span>Robustness</span></div>
+        </article>
+        <article class="arc-card reveal">
+          <span class="arc-num">04</span>
+          <h3>Generalise</h3>
+          <p>Extend the problem into multimodal and vision-language systems, where information can persist across interacting modalities.</p>
+          <div class="tags"><span>LLaVA</span><span>BLIP-2</span><span>VQA</span></div>
+        </article>
+      </div>
+
+      <div class="interactive-lab reveal" id="lab">
+        <div class="lab-copy">
+          <span class="eyebrow">Interactive research idea</span>
+          <h3>Forgetting can look successful—until deployment changes the model.</h3>
+          <p>Use the controls to simulate the logic behind quantisation-induced recovery. This is a conceptual visual, not an experimental result.</p>
+          <div class="lab-controls">
+            <button class="lab-btn active" data-state="trained">Trained</button>
+            <button class="lab-btn" data-state="forgotten">Unlearn</button>
+            <button class="lab-btn" data-state="recovered">Quantize INT4</button>
+          </div>
+          <div class="lab-status"><span class="status-dot"></span><span id="labStatus">Target knowledge present</span></div>
+        </div>
+        <div class="network" aria-label="Conceptual network visualization">
+          <svg viewBox="0 0 720 430" role="img" aria-label="Animated network showing model memory state">
+            <g class="links"></g>
+            <g class="nodes"></g>
+          </svg>
+          <div class="network-caption">conceptual representation · not to scale</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="publications" class="section-pad publications-section">
+      <div class="section-head reveal">
+        <span class="eyebrow">02 · Publications & active research</span>
+        <h2>Work designed to survive <em>scrutiny.</em></h2>
+        <p>Selected research across machine unlearning, multimodal AI, privacy auditing, robustness and applied AI.</p>
+      </div>
+
+      <div class="pub-list">
+        <article class="pub featured reveal">
+          <div class="pub-index">01</div>
+          <div class="pub-main">
+            <div class="pub-meta"><span class="badge accepted">Accepted</span><span>Neurocomputing · 2026</span></div>
+            <h3>Hessian-Guided Gradient Unlearning</h3>
+            <p>Combines fast gradient-based forgetting with curvature-aware Hessian refinement to improve selective unlearning without full retraining.</p>
+            <div class="pub-links"><a href="https://github.com/abdullahak07/Hessian-Guided-Paper" target="_blank" rel="noopener">Code ↗</a></div>
+          </div>
+          <div class="pub-visual curvature" aria-hidden="true"><span></span><span></span><span></span></div>
+        </article>
+
+        <article class="pub reveal">
+          <div class="pub-index">02</div>
+          <div class="pub-main">
+            <div class="pub-meta"><span class="badge research">Research</span><span>Multimodal machine unlearning · 2026</span></div>
+            <h3>Selective Multimodal Unlearning via Boundary-Based Forgetting</h3>
+            <p>Boundary deformation, projected gradient control, curvature-aware stabilisation and shared-space decorrelation for selective multimodal forgetting.</p>
+            <div class="pub-links"><a href="https://github.com/abdullahak07/BoundaryUnl" target="_blank" rel="noopener">Code ↗</a></div>
+          </div>
+          <div class="pub-visual boundary" aria-hidden="true"><i></i><i></i><i></i></div>
+        </article>
+
+        <article class="pub reveal">
+          <div class="pub-index">03</div>
+          <div class="pub-main">
+            <div class="pub-meta"><span class="badge preprint">Preprint</span><span>arXiv:2605.02196</span></div>
+            <h3>DurableUn: Quantization-Induced Recovery Attacks in Machine Unlearning</h3>
+            <p>Shows that information judged forgotten at higher precision can reappear after low-bit deployment quantisation, motivating durability-aware evaluation.</p>
+            <div class="pub-links">
+              <a href="https://arxiv.org/abs/2605.02196" target="_blank" rel="noopener">Paper ↗</a>
+            </div>
+          </div>
+          <div class="pub-visual quant" aria-hidden="true"><span>BF16</span><b>→</b><span>INT4</span></div>
+        </article>
+
+        <article class="pub reveal">
+          <div class="pub-index">04</div>
+          <div class="pub-main">
+            <div class="pub-meta"><span class="badge preprint">Preprint</span><span>arXiv:2605.02206</span></div>
+            <h3>Metric Unreliability in Multimodal Machine Unlearning: A Systematic Analysis and Principled Unified Score</h3>
+            <p>Examines disagreement between common unlearning metrics and develops a unified evaluation framework grounded against an oracle retrained model.</p>
+            <div class="pub-links"><a href="https://arxiv.org/abs/2605.02206" target="_blank" rel="noopener">Paper ↗</a></div>
+          </div>
+          <div class="pub-visual metric" aria-hidden="true"><i style="--h:65%"></i><i style="--h:38%"></i><i style="--h:82%"></i><i style="--h:52%"></i><i style="--h:74%"></i></div>
+        </article>
+
+        <article class="pub reveal">
+          <div class="pub-index">05</div>
+          <div class="pub-main">
+            <div class="pub-meta"><span class="badge research">Under review</span><span>Knowledge-Based Systems · 2026</span></div>
+            <h3>MU-ALIGN: Tail-Suppressed Multimodal Machine Unlearning for Vision-Language Models</h3>
+            <p>Targets residual high-confidence forgotten predictions while stabilising retained representations through alignment and distillation.</p>
+            <div class="pub-links"><a href="https://github.com/abdullahak07/MU-Align" target="_blank" rel="noopener">Code ↗</a></div>
+          </div>
+          <div class="pub-visual tail" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        </article>
+
+        <article class="pub reveal">
+          <div class="pub-index">06</div>
+          <div class="pub-main">
+            <div class="pub-meta"><span class="badge research">Current research</span><span>Vision-language unlearning · 2026</span></div>
+            <h3>Beyond Output-Level Forgetting: A Two-Dimensional Audit of Multimodal Machine Unlearning</h3>
+            <p>Audits output behaviour and internal representation retention together to expose cases where apparent forgetting does not imply erased internal knowledge.</p>
+          </div>
+          <div class="pub-visual axes" aria-hidden="true"><i></i><b></b><span></span></div>
+        </article>
+
+        <article class="pub compact reveal">
+          <div class="pub-index">07</div>
+          <div class="pub-main">
+            <div class="pub-meta"><span class="badge published">Published</span><span>Springer · 2023</span></div>
+            <h3>Rapid Face Mask Detection and Person Identification Model Based on Deep Neural Networks</h3>
+          </div>
+        </article>
+
+        <article class="pub compact reveal">
+          <div class="pub-index">08</div>
+          <div class="pub-main">
+            <div class="pub-meta"><span class="badge published">Published</span><span>IEEE CSI · 2022</span></div>
+            <h3>Islamophobic Tweet Detection using Transfer Learning</h3>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="teaching" class="section-pad teaching-section">
+      <div class="section-head reveal">
+        <span class="eyebrow">03 · Teaching</span>
+        <h2>Teaching that moves from <em>concept</em> to <em>implementation.</em></h2>
+        <p>I teach across artificial intelligence, intelligent systems, cyber threat intelligence, network security and cryptography—using live demonstrations, guided problem solving and applied lab work.</p>
+      </div>
+
+      <div class="teaching-grid">
+        <article class="institution-card reveal">
+          <span class="institution-label">University of Notre Dame Australia</span>
+          <h3>Academic Lecturer</h3>
+          <p class="time">2026—Present · Perth</p>
+          <ul>
+            <li><strong>COMP6012</strong> Cyber Threat Intelligence</li>
+            <li><strong>COMP6013</strong> Network Security & Cryptography</li>
+          </ul>
+          <p>Lectures, tutorials, practical sessions, applied labs, assessment, marking and student consultation.</p>
+        </article>
+
+        <article class="institution-card reveal">
+          <span class="institution-label">Murdoch University</span>
+          <h3>Casual Academic · Information Technology</h3>
+          <p class="time">2024—Present · Perth</p>
+          <ul>
+            <li><strong>ICT619</strong> Artificial Intelligence</li>
+            <li><strong>ICT206</strong> Intelligent Systems</li>
+            <li><strong>ICT100</strong> Transition to IT</li>
+          </ul>
+          <p>Tutorials, laboratories, workshops, demonstrations, guided problem solving, marking and research/project mentoring.</p>
+        </article>
+      </div>
+
+      <div class="teaching-lab reveal">
+        <div>
+          <span class="eyebrow">Teaching Lab</span>
+          <h3>Interactive learning resources instead of slide-only teaching.</h3>
+          <p>I build browser-based teaching experiences for cybersecurity and network-security topics so students can learn through visual explanations, guided activities and practical experimentation.</p>
+        </div>
+        <div class="lab-links">
+          <a href="https://github.com/abdullahak07/ND-W1" target="_blank" rel="noopener"><span>Week 01</span>Cyber Threat Intelligence <b>↗</b></a>
+          <a href="https://github.com/abdullahak07/ND-W2" target="_blank" rel="noopener"><span>Week 02</span>Interactive CTI Modules <b>↗</b></a>
+          <a href="https://github.com/abdullahak07/ND-W3" target="_blank" rel="noopener"><span>Week 03</span>Kali Linux & Frameworks <b>↗</b></a>
+          <a href="https://github.com/abdullahak07/ND-W4" target="_blank" rel="noopener"><span>Week 04</span>Crypto Arcade <b>↗</b></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="section-pad projects-section">
+      <div class="section-head reveal">
+        <span class="eyebrow">04 · Research software & applied systems</span>
+        <h2>Researcher who also <em>builds.</em></h2>
+        <p>Selected repositories spanning reproducible research software, local AI, computer vision, NLP and applied systems.</p>
+      </div>
+
+      <div class="project-grid">
+        <a class="project-card reveal" href="https://github.com/abdullahak07/MU-Align" target="_blank" rel="noopener">
+          <span class="project-type">Research software</span><h3>MU-ALIGN</h3><p>Vision-language machine unlearning with tail suppression, representation alignment and distillation.</p><span class="project-arrow">↗</span>
+        </a>
+        <a class="project-card reveal" href="https://github.com/abdullahak07/Hessian-Guided-Paper" target="_blank" rel="noopener">
+          <span class="project-type">Research software</span><h3>Hessian-Guided Unlearning</h3><p>Reproducible pipelines for curvature-aware selective machine unlearning.</p><span class="project-arrow">↗</span>
+        </a>
+        <a class="project-card reveal" href="https://github.com/abdullahak07/1DProb" target="_blank" rel="noopener">
+          <span class="project-type">Applied genomics</span><h3>1DProb</h3><p>Antibiotic-resistance cargo screening across chromosome-only and full-genome assemblies.</p><span class="project-arrow">↗</span>
+        </a>
+        <a class="project-card reveal" href="https://github.com/abdullahak07/tradie-invoice" target="_blank" rel="noopener">
+          <span class="project-type">Local AI</span><h3>Perth Tradie Quote AI</h3><p>Voice-to-quote workflow with local language models, editable costing and branded PDF generation.</p><span class="project-arrow">↗</span>
+        </a>
+        <a class="project-card reveal" href="https://github.com/abdullahak07/FaceMaskDetectionFMD" target="_blank" rel="noopener">
+          <span class="project-type">Computer vision</span><h3>Face Mask Detection</h3><p>Deep-learning based detection and person-identification research implementation.</p><span class="project-arrow">↗</span>
+        </a>
+        <a class="project-card reveal" href="https://github.com/abdullahak07/AutomobileNumberPlateDetectionSystem" target="_blank" rel="noopener">
+          <span class="project-type">Computer vision</span><h3>Number Plate Detection</h3><p>Earlier applied ML work in automatic number-plate detection and recognition.</p><span class="project-arrow">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section id="about" class="section-pad about-section">
+      <div class="section-head reveal">
+        <span class="eyebrow">05 · About</span>
+        <h2>A research career built across <em>methods, systems and teaching.</em></h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-copy reveal">
+          <p>I am a final-stage PhD researcher in Computer Science at Murdoch University and a university educator working across two Australian institutions. My research focuses on trustworthy and privacy-preserving AI, especially machine unlearning in neural, multimodal and vision-language systems.</p>
+          <p>I develop reproducible pipelines for model training, unlearning, privacy attacks, robustness testing, quantisation, representation analysis and statistical evaluation. I also collaborate on applied biomedical and genomics research.</p>
+          <p>Outside the lab, I have led student communities as Founder & President of the Murdoch Cricket Club and President of the Murdoch University Muslim Students Association.</p>
+          <div class="profile-links">
+            <a href="mailto:aahmad607@gmail.com">Email ↗</a>
+            <a href="https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar ↗</a>
+            <a href="https://github.com/abdullahak07" target="_blank" rel="noopener">GitHub ↗</a>
+            <a href="https://www.linkedin.com/in/abdullahakhan" target="_blank" rel="noopener">LinkedIn ↗</a>
+          </div>
+        </div>
+
+        <div class="timeline reveal">
+          <div class="timeline-item"><span>2026</span><div><strong>Academic Lecturer</strong><small>University of Notre Dame Australia</small></div></div>
+          <div class="timeline-item"><span>2024</span><div><strong>Casual Academic · IT</strong><small>Murdoch University</small></div></div>
+          <div class="timeline-item"><span>2023</span><div><strong>PhD · Computer Science</strong><small>Murdoch University · thesis finalisation</small></div></div>
+          <div class="timeline-item"><span>2021</span><div><strong>Master of Computer Science & Applications</strong><small>Aligarh Muslim University</small></div></div>
+        </div>
+      </div>
+
+      <div class="skills reveal">
+        <span>Machine Unlearning</span><span>Trustworthy AI</span><span>Multimodal Learning</span><span>Vision-Language Models</span><span>Privacy-Preserving ML</span><span>PyTorch</span><span>TensorFlow</span><span>Hugging Face</span><span>Python</span><span>R</span><span>Statistical Inference</span><span>Reproducible Research</span><span>Cybersecurity Education</span>
+      </div>
+    </section>
+
+    <section class="closing section-pad">
+      <span class="eyebrow reveal">Collaborate · supervise · build</span>
+      <h2 class="reveal">Interested in machine unlearning, trustworthy AI or multimodal systems?</h2>
+      <div class="closing-actions reveal">
+        <a class="button primary" href="mailto:aahmad607@gmail.com">Start a conversation</a>
+        <a class="button ghost" href="cv.html">Download CV</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>© <span id="year"></span> Abdullah Ahmad Khan</div>
+    <div>AI · Trustworthy Systems · Education</div>
+    <a href="#top">Back to top ↑</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
