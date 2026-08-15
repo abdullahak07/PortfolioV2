@@ -73,3 +73,116 @@ function setState(s){
 }
 buttons.forEach(b=>b.addEventListener('click',()=>setState(b.dataset.state)));
 setState('trained');
+
+// Live scholarly telemetry via our Vercel proxy to the Semantic Scholar Academic Graph.
+// The site remains fully usable if the external service is unavailable or rate-limited.
+const scholarNumber = new Intl.NumberFormat('en-AU');
+
+function normaliseScholarText(value = '') {
+  return value
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function titleSimilarity(a, b) {
+  const aa = new Set(normaliseScholarText(a).split(' ').filter(word => word.length > 2));
+  const bb = new Set(normaliseScholarText(b).split(' ').filter(word => word.length > 2));
+  if (!aa.size || !bb.size) return 0;
+  let common = 0;
+  aa.forEach(word => { if (bb.has(word)) common += 1; });
+  return common / Math.max(aa.size, bb.size);
+}
+
+function addLiveCitationBadges(papers = []) {
+  if (!papers.length) return;
+
+  document.querySelectorAll('.pub').forEach(card => {
+    const heading = card.querySelector('h3');
+    const meta = card.querySelector('.pub-meta');
+    if (!heading || !meta || meta.querySelector('.live-citation')) return;
+
+    const match = papers
+      .map(paper => ({ paper, score: titleSimilarity(heading.textContent, paper.title) }))
+      .sort((a, b) => b.score - a.score)[0];
+
+    if (!match || match.score < .62) return;
+    const count = Number(match.paper.citationCount || 0);
+    const badge = document.createElement('span');
+    badge.className = 'live-citation';
+    badge.textContent = `${scholarNumber.format(count)} citation${count === 1 ? '' : 's'}`;
+    badge.title = 'Live citation count from Semantic Scholar';
+    meta.appendChild(badge);
+  });
+}
+
+function renderScholarPanel(data) {
+  const section = document.querySelector('.publications-section');
+  const head = section?.querySelector('.section-head');
+  if (!section || !head || !data?.available) return;
+
+  const existing = document.getElementById('scholarLive');
+  if (existing) existing.remove();
+
+  const panel = document.createElement('div');
+  panel.id = 'scholarLive';
+  panel.className = 'scholar-live';
+  panel.setAttribute('aria-label', 'Live scholarly metrics from Semantic Scholar');
+
+  let metrics;
+  let sourceLink = 'https://www.semanticscholar.org/';
+
+  if (data.mode === 'author' && data.author) {
+    const author = data.author;
+    sourceLink = author.url || sourceLink;
+    metrics = [
+      ['Citations', scholarNumber.format(Number(author.citationCount || 0))],
+      ['h-index', scholarNumber.format(Number(author.hIndex || 0))],
+      ['Indexed papers', scholarNumber.format(Number(author.paperCount || 0))],
+    ];
+  } else {
+    const summary = data.summary || {};
+    metrics = [
+      ['Tracked citations', scholarNumber.format(Number(summary.citationCount || 0))],
+      ['Tracked works', scholarNumber.format(Number(summary.trackedPapers || data.papers?.length || 0))],
+      ['Influential cites', scholarNumber.format(Number(summary.influentialCitationCount || 0))],
+    ];
+  }
+
+  panel.innerHTML = `
+    <div class="scholar-live-label">
+      <span class="scholar-pulse" aria-hidden="true"></span>
+      <div><strong>Live research signal</strong><small>Semantic Scholar Academic Graph · cached for performance</small></div>
+    </div>
+    ${metrics.map(([label, value]) => `<div class="scholar-stat"><strong>${value}</strong><span>${label}</span></div>`).join('')}
+    <a class="scholar-source" href="${sourceLink}" target="_blank" rel="noopener">View source ↗</a>
+  `;
+
+  head.insertAdjacentElement('afterend', panel);
+  addLiveCitationBadges(data.papers || []);
+}
+
+async function loadScholarMetrics() {
+  const section = document.querySelector('.publications-section');
+  if (!section) return;
+
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const response = await fetch('/api/research-metrics', {
+      headers: { accept: 'application/json' },
+      signal: controller.signal,
+    });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (data?.available) renderScholarPanel(data);
+  } catch (error) {
+    console.info('Live scholarly metrics unavailable; static portfolio retained.', error?.message || error);
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
+loadScholarMetrics();
