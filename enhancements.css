@@ -1,0 +1,232 @@
+/* Portfolio V2 — focused enhancements for teaching artefacts and deployed systems */
+
+.teaching-studio{
+  display:grid;
+  grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);
+  gap:clamp(42px,6vw,90px);
+  margin-top:76px;
+  padding-top:64px;
+  border-top:1px solid var(--line);
+}
+
+.studio-intro{
+  position:sticky;
+  top:112px;
+  align-self:start;
+}
+
+.studio-intro h3{
+  max-width:640px;
+  margin:16px 0 20px;
+  font-size:clamp(38px,4.5vw,64px);
+  line-height:1;
+  letter-spacing:-.055em;
+  font-weight:650;
+}
+
+.studio-intro>p{
+  max-width:570px;
+  color:var(--muted);
+  font-size:15px;
+}
+
+.studio-stat{
+  display:flex;
+  align-items:flex-end;
+  gap:16px;
+  margin-top:42px;
+  padding-top:22px;
+  border-top:1px solid var(--line);
+}
+
+.studio-stat strong{
+  color:var(--accent);
+  font-size:58px;
+  line-height:.8;
+  letter-spacing:-.07em;
+}
+
+.studio-stat span{
+  max-width:210px;
+  color:#77756e;
+  font-size:10px;
+  line-height:1.4;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+
+.studio-weeks{
+  border-top:1px solid var(--line);
+}
+
+.studio-week{
+  display:grid;
+  grid-template-columns:112px minmax(0,1fr) auto;
+  gap:24px;
+  align-items:center;
+  min-height:146px;
+  padding:24px 0;
+  border-bottom:1px solid var(--line);
+  transition:background .25s ease,padding .25s ease;
+}
+
+.studio-week:hover{
+  padding-left:16px;
+  padding-right:16px;
+  background:linear-gradient(90deg,rgba(217,255,99,.055),transparent 70%);
+}
+
+.week-id{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.week-id span{
+  color:var(--accent);
+  font-family:Georgia,serif;
+  font-size:44px;
+  line-height:.9;
+  letter-spacing:-.04em;
+}
+
+.week-id small{
+  color:#66645e;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+}
+
+.week-copy strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:19px;
+  letter-spacing:-.025em;
+}
+
+.week-copy p{
+  max-width:390px;
+  margin:0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.week-actions{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  min-width:138px;
+}
+
+.week-actions a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:9px 11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:#c9c7bf;
+  font-size:10px;
+  white-space:nowrap;
+  transition:.2s ease;
+}
+
+.week-actions a:hover{
+  border-color:rgba(217,255,99,.55);
+  color:var(--accent);
+  transform:translateX(3px);
+}
+
+.live-project{
+  background:
+    radial-gradient(circle at 82% 12%,rgba(217,255,99,.11),transparent 31%),
+    linear-gradient(155deg,#11110f,var(--bg) 64%);
+  border-color:#45483a;
+}
+
+.live-project:before{
+  content:"LIVE";
+  position:absolute;
+  top:25px;
+  right:26px;
+  color:var(--accent);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.13em;
+}
+
+.live-project:hover{
+  border-color:rgba(217,255,99,.58);
+  box-shadow:0 24px 60px rgba(0,0,0,.23);
+}
+
+.live-project .project-arrow{
+  width:max-content;
+  padding:7px 10px;
+  border:1px solid rgba(217,255,99,.24);
+  border-radius:999px;
+  font-size:11px;
+}
+
+.live-dot{
+  display:inline-block;
+  width:6px;
+  height:6px;
+  margin-right:7px;
+  border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 13px rgba(217,255,99,.8);
+  vertical-align:1px;
+}
+
+.pub.compact .pub-links{
+  margin-top:11px;
+}
+
+.pub.compact .pub-links a{
+  color:#c8c6be;
+  transition:.2s;
+}
+
+.pub.compact .pub-links a:hover{
+  color:var(--accent);
+}
+
+/* Give the broader role line presence without turning it into a badge wall. */
+.hero-kicker{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.hero-kicker:before{
+  content:"";
+  width:26px;
+  height:1px;
+  background:var(--accent);
+}
+
+@media(max-width:1100px){
+  .teaching-studio{grid-template-columns:1fr;gap:42px}
+  .studio-intro{position:static}
+  .studio-intro h3{max-width:760px}
+}
+
+@media(max-width:760px){
+  .teaching-studio{margin-top:56px;padding-top:48px}
+  .studio-week{grid-template-columns:72px 1fr;gap:18px;padding:22px 0}
+  .studio-week:hover{padding-left:0;padding-right:0;background:transparent}
+  .week-id span{font-size:36px}
+  .week-actions{grid-column:2;flex-direction:row;flex-wrap:wrap;min-width:0}
+  .week-actions a{font-size:9px}
+  .studio-stat strong{font-size:48px}
+}
+
+@media(max-width:520px){
+  .studio-week{grid-template-columns:58px 1fr}
+  .week-id small{display:none}
+  .week-copy strong{font-size:17px}
+  .week-actions a{padding:8px 9px}
+  .hero-kicker{line-height:1.55}
+}
