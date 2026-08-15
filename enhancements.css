@@ -39,6 +39,10 @@
 .hero-kicker{display:flex;align-items:center;gap:9px}
 .hero-kicker:before{content:"";width:26px;height:1px;background:var(--accent)}
 
+/* Remove the oversized dashboard-style profile counters from the hero. */
+.metric-strip{display:none!important}
+.hero{padding-bottom:clamp(72px,8vw,118px)}
+
 /* Research Now — live arXiv metadata with no citation or ranking metrics. */
 .research-now{
   display:grid;
