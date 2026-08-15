@@ -74,96 +74,87 @@ function setState(s){
 buttons.forEach(b=>b.addEventListener('click',()=>setState(b.dataset.state)));
 setState('trained');
 
-// Live scholarly telemetry via our Vercel proxy to the Semantic Scholar Academic Graph.
-// The site remains fully usable if the external service is unavailable or rate-limited.
-const scholarNumber = new Intl.NumberFormat('en-AU');
+// Live arXiv metadata: show research momentum, not vanity metrics.
+const arxivCategoryNames = {
+  'cs.LG':'Machine Learning',
+  'cs.AI':'Artificial Intelligence',
+  'cs.CV':'Computer Vision',
+  'cs.CL':'Computation & Language',
+  'cs.CR':'Cryptography & Security',
+  'stat.ML':'Machine Learning',
+};
 
-function normaliseScholarText(value = '') {
-  return value
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
+function escapeHtml(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
-function titleSimilarity(a, b) {
-  const aa = new Set(normaliseScholarText(a).split(' ').filter(word => word.length > 2));
-  const bb = new Set(normaliseScholarText(b).split(' ').filter(word => word.length > 2));
-  if (!aa.size || !bb.size) return 0;
-  let common = 0;
-  aa.forEach(word => { if (bb.has(word)) common += 1; });
-  return common / Math.max(aa.size, bb.size);
+function formatResearchDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Recent';
+  return new Intl.DateTimeFormat('en-AU', { month:'short', year:'numeric' }).format(date);
 }
 
-function addLiveCitationBadges(papers = []) {
-  if (!papers.length) return;
-
-  document.querySelectorAll('.pub').forEach(card => {
-    const heading = card.querySelector('h3');
-    const meta = card.querySelector('.pub-meta');
-    if (!heading || !meta || meta.querySelector('.live-citation')) return;
-
-    const match = papers
-      .map(paper => ({ paper, score: titleSimilarity(heading.textContent, paper.title) }))
-      .sort((a, b) => b.score - a.score)[0];
-
-    if (!match || match.score < .62) return;
-    const count = Number(match.paper.citationCount || 0);
-    const badge = document.createElement('span');
-    badge.className = 'live-citation';
-    badge.textContent = `${scholarNumber.format(count)} citation${count === 1 ? '' : 's'}`;
-    badge.title = 'Live citation count from Semantic Scholar';
-    meta.appendChild(badge);
-  });
-}
-
-function renderScholarPanel(data) {
+function renderResearchFeed(data) {
   const section = document.querySelector('.publications-section');
   const head = section?.querySelector('.section-head');
-  if (!section || !head || !data?.available) return;
+  const papers = Array.isArray(data?.papers) ? data.papers.slice(0, 4) : [];
+  if (!section || !head || !data?.available || !papers.length) return;
 
-  const existing = document.getElementById('scholarLive');
-  if (existing) existing.remove();
+  document.getElementById('researchNow')?.remove();
 
-  const panel = document.createElement('div');
-  panel.id = 'scholarLive';
-  panel.className = 'scholar-live';
-  panel.setAttribute('aria-label', 'Live scholarly metrics from Semantic Scholar');
+  const panel = document.createElement('section');
+  panel.id = 'researchNow';
+  panel.className = 'research-now';
+  panel.setAttribute('aria-label', 'Latest research from arXiv');
 
-  let metrics;
-  let sourceLink = 'https://www.semanticscholar.org/';
+  const paperRows = papers.map((paper, index) => {
+    const categories = (paper.categories || []).slice(0, 2)
+      .map(code => `<span>${escapeHtml(arxivCategoryNames[code] || code)}</span>`)
+      .join('');
+    const coauthors = (paper.authors || [])
+      .filter(name => !/abdullah\s+(ahmad\s+)?khan/i.test(name))
+      .slice(0, 3)
+      .map(escapeHtml)
+      .join(' · ');
 
-  if (data.mode === 'author' && data.author) {
-    const author = data.author;
-    sourceLink = author.url || sourceLink;
-    metrics = [
-      ['Citations', scholarNumber.format(Number(author.citationCount || 0))],
-      ['h-index', scholarNumber.format(Number(author.hIndex || 0))],
-      ['Indexed papers', scholarNumber.format(Number(author.paperCount || 0))],
-    ];
-  } else {
-    const summary = data.summary || {};
-    metrics = [
-      ['Tracked citations', scholarNumber.format(Number(summary.citationCount || 0))],
-      ['Tracked works', scholarNumber.format(Number(summary.trackedPapers || data.papers?.length || 0))],
-      ['Influential cites', scholarNumber.format(Number(summary.influentialCitationCount || 0))],
-    ];
-  }
+    return `
+      <article class="research-now-paper">
+        <div class="research-now-meta">
+          <span class="research-now-date">${formatResearchDate(paper.updated || paper.published)}</span>
+          ${index === 0 ? '<span class="research-now-latest">Latest</span>' : ''}
+        </div>
+        <div class="research-now-copy">
+          <div class="research-now-tags">${categories}</div>
+          <h4>${escapeHtml(paper.title)}</h4>
+          ${coauthors ? `<p>with ${coauthors}</p>` : ''}
+        </div>
+        <a class="research-now-link" href="${escapeHtml(paper.url)}" target="_blank" rel="noopener" aria-label="Read ${escapeHtml(paper.title)} on arXiv">Read paper <span>↗</span></a>
+      </article>
+    `;
+  }).join('');
 
   panel.innerHTML = `
-    <div class="scholar-live-label">
-      <span class="scholar-pulse" aria-hidden="true"></span>
-      <div><strong>Live research signal</strong><small>Semantic Scholar Academic Graph · cached for performance</small></div>
+    <div class="research-now-intro">
+      <div>
+        <span class="research-now-signal" aria-hidden="true"></span>
+        <span class="eyebrow">Live from arXiv</span>
+      </div>
+      <h3>Research, while it’s <em>moving.</em></h3>
+      <p>Current preprints and revisions pulled from the arXiv metadata feed. No citation counters—just the work itself.</p>
+      <a href="https://arxiv.org/search/?query=Abdullah+Ahmad+Khan&searchtype=author" target="_blank" rel="noopener">View arXiv search ↗</a>
     </div>
-    ${metrics.map(([label, value]) => `<div class="scholar-stat"><strong>${value}</strong><span>${label}</span></div>`).join('')}
-    <a class="scholar-source" href="${sourceLink}" target="_blank" rel="noopener">View source ↗</a>
+    <div class="research-now-list">${paperRows}</div>
   `;
 
   head.insertAdjacentElement('afterend', panel);
-  addLiveCitationBadges(data.papers || []);
 }
 
-async function loadScholarMetrics() {
+async function loadResearchFeed() {
   const section = document.querySelector('.publications-section');
   if (!section) return;
 
@@ -171,18 +162,18 @@ async function loadScholarMetrics() {
   const timer = window.setTimeout(() => controller.abort(), 8000);
 
   try {
-    const response = await fetch('/api/research-metrics', {
+    const response = await fetch('/api/research-feed', {
       headers: { accept: 'application/json' },
       signal: controller.signal,
     });
     if (!response.ok) return;
     const data = await response.json();
-    if (data?.available) renderScholarPanel(data);
+    renderResearchFeed(data);
   } catch (error) {
-    console.info('Live scholarly metrics unavailable; static portfolio retained.', error?.message || error);
+    console.info('Live arXiv feed unavailable; static publications retained.', error?.message || error);
   } finally {
     window.clearTimeout(timer);
   }
 }
 
-loadScholarMetrics();
+loadResearchFeed();
