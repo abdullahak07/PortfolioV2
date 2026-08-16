@@ -28,7 +28,6 @@ nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Conceptual neural network: fixed coordinates, target nodes change by state.
 const svg = document.querySelector('.network svg');
 const nodeGroup = svg.querySelector('.nodes');
 const linkGroup = svg.querySelector('.links');
@@ -74,7 +73,6 @@ function setState(s){
 buttons.forEach(b=>b.addEventListener('click',()=>setState(b.dataset.state)));
 setState('trained');
 
-// Live arXiv metadata: show research momentum, not vanity metrics.
 const arxivCategoryNames = {
   'cs.LG':'Machine Learning',
   'cs.AI':'Artificial Intelligence',
@@ -178,13 +176,7 @@ async function loadResearchFeed() {
 
 loadResearchFeed();
 
-// ---------------------------------------------------------------------------
-// Apple-inspired interaction layer
-// Direct response, interruptible spring motion, velocity handoff and materials.
-// ---------------------------------------------------------------------------
-
 (function installAppleInteractionLayer(){
-  // Load separately so the original visual system remains easy to revert.
   if (!document.querySelector('link[data-apple-motion]')) {
     const sheet = document.createElement('link');
     sheet.rel = 'stylesheet';
@@ -207,7 +199,6 @@ loadResearchFeed();
     el.addEventListener('blur', release);
   });
 
-  // ---- Direct-manipulation research state scrubber ----
   const controls = document.querySelector('.lab-controls');
   if (controls && network && status && !document.querySelector('.research-scrubber')) {
     const scrubber = document.createElement('div');
@@ -335,12 +326,10 @@ loadResearchFeed();
       if (e.key === 'End') { e.preventDefault(); springTo(1); }
     });
 
-    // Existing buttons now re-target the same spring rather than jumping states.
     buttons.forEach((b,index) => b.addEventListener('click', () => springTo([0,.5,1][index])));
     renderValue(0,false);
   }
 
-  // ---- Momentum + interruptibility for the mobile Teaching Studio ----
   const deck = document.querySelector('.studio-weeks');
   if (deck) {
     let active = false;
@@ -395,3 +384,10 @@ loadResearchFeed();
     deck.addEventListener('pointercancel', endDeckDrag);
   }
 })();
+
+// Load the Beautiful UI inspired research/product layer last so it can enhance
+// the existing portfolio without changing the underlying content structure.
+const beautifulUiScript = document.createElement('script');
+beautifulUiScript.src = 'beautiful-ui.js';
+beautifulUiScript.defer = true;
+document.body.appendChild(beautifulUiScript);
