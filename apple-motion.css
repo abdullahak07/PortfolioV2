@@ -1,0 +1,157 @@
+/* Apple-inspired interaction layer — motion, materials, direct manipulation, accessibility */
+
+:root{
+  --motion-surface:rgba(13,13,11,.72);
+  --motion-surface-strong:rgba(13,13,11,.90);
+  --motion-highlight:rgba(217,255,99,.10);
+  --motion-shadow:0 18px 60px rgba(0,0,0,.22);
+}
+
+/* Floating chrome: translucent, quieter than a hard opaque strip. */
+.site-header{
+  background:var(--motion-surface)!important;
+  backdrop-filter:blur(22px) saturate(145%)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%)!important;
+  border-bottom-color:transparent!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.045),0 14px 34px rgba(0,0,0,.10);
+}
+.site-header:after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-18px;height:18px;
+  pointer-events:none;
+  background:linear-gradient(to bottom,rgba(10,10,9,.14),transparent);
+  opacity:.7;
+}
+
+/* Immediate tactile response — the press begins on pointer-down. */
+.button,.lab-btn,.week-actions a,.project-card,.profile-links a,.pub-links a,.nav a,.research-now-link{
+  -webkit-tap-highlight-color:transparent;
+  transform-origin:center;
+}
+.motion-pressable{
+  will-change:transform;
+  transition:transform 160ms cubic-bezier(.2,.8,.2,1),border-color 180ms ease,background-color 180ms ease,color 180ms ease,box-shadow 180ms ease!important;
+}
+.motion-pressable.is-pressed{transform:scale(.97)!important}
+.button.primary.is-pressed{box-shadow:0 5px 18px rgba(217,255,99,.09)!important}
+.project-card.motion-pressable.is-pressed{transform:translateY(-1px) scale(.985)!important}
+
+/* Direct-manipulation research scrubber. */
+.research-scrubber{
+  margin-top:22px;
+  padding:15px 0 2px;
+  user-select:none;
+  touch-action:none;
+}
+.research-scrubber-top{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  margin-bottom:12px;
+}
+.research-scrubber-top span{
+  color:#85837b;font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+}
+.research-scrubber-top strong{
+  color:#d8d6ce;font-size:10px;font-weight:650;
+}
+.research-track{
+  position:relative;height:30px;display:flex;align-items:center;cursor:grab;
+}
+.research-track:active{cursor:grabbing}
+.research-track-line{
+  position:absolute;left:0;right:0;height:2px;border-radius:999px;
+  background:#363630;
+}
+.research-track-fill{
+  position:absolute;left:0;width:0;height:2px;border-radius:999px;
+  background:linear-gradient(90deg,var(--accent),#f0ffb8);
+  box-shadow:0 0 16px rgba(217,255,99,.18);
+  transform-origin:left center;
+}
+.research-track-knob{
+  position:absolute;left:0;width:22px;height:22px;margin-left:-11px;border-radius:50%;
+  border:1px solid rgba(217,255,99,.75);
+  background:#11120e;
+  box-shadow:0 0 0 5px rgba(217,255,99,.055),0 5px 18px rgba(0,0,0,.35);
+  will-change:left,transform;
+}
+.research-track-knob:after{
+  content:"";position:absolute;inset:6px;border-radius:50%;background:var(--accent);
+}
+.research-track.is-dragging .research-track-knob{transform:scale(1.12)}
+.research-stops{
+  display:grid;grid-template-columns:repeat(3,1fr);margin-top:1px;
+  color:#67655e;font-size:8px;text-transform:uppercase;letter-spacing:.09em;
+}
+.research-stops span:nth-child(2){text-align:center}.research-stops span:last-child{text-align:right}
+
+/* Give the conceptual network continuous visual feedback while scrubbing. */
+.network .target{will-change:opacity,filter}
+.network.is-scrubbing .target{transition:none!important}
+
+/* Mobile Teaching Studio becomes a physical horizontal deck. */
+@media(max-width:760px){
+  .studio-weeks{
+    display:flex!important;
+    gap:12px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:auto;
+    padding:2px 20px 12px 0;
+    border-top:0!important;
+    scrollbar-width:none;
+    overscroll-behavior-x:contain;
+    touch-action:pan-y;
+    cursor:grab;
+  }
+  .studio-weeks::-webkit-scrollbar{display:none}
+  .studio-weeks.is-dragging{cursor:grabbing;scroll-snap-type:none}
+  .studio-week{
+    flex:0 0 min(86vw,430px)!important;
+    min-height:245px!important;
+    grid-template-columns:58px 1fr!important;
+    align-content:start!important;
+    scroll-snap-align:start;
+    padding:24px!important;
+    border:1px solid var(--line)!important;
+    border-radius:18px;
+    background:linear-gradient(150deg,rgba(18,18,15,.92),rgba(10,10,9,.97));
+    box-shadow:0 16px 42px rgba(0,0,0,.14);
+  }
+  .studio-week:hover{padding:24px!important;background:linear-gradient(150deg,rgba(18,18,15,.92),rgba(10,10,9,.97))!important}
+  .week-actions{grid-column:2!important;align-self:end;margin-top:18px}
+  .studio-intro{margin-bottom:10px}
+}
+
+/* Slightly more optical typography discipline. */
+.hero-title,.section-head h2,.studio-intro h3,.research-now-intro h3{
+  font-optical-sizing:auto;
+  text-wrap:balance;
+}
+.hero-copy,.section-head p,.week-copy p,.project-card p{
+  text-wrap:pretty;
+}
+
+/* Focus states that match the rest of the interface. */
+a:focus-visible,button:focus-visible,.research-track:focus-visible{
+  outline:2px solid var(--accent);outline-offset:4px;
+}
+
+/* Accessibility: gentler equivalents, not zero feedback. */
+@media(prefers-reduced-motion:reduce){
+  .motion-pressable{transition:opacity 120ms ease,background-color 120ms ease,border-color 120ms ease!important}
+  .motion-pressable.is-pressed{transform:none!important;opacity:.78}
+  .research-track-knob,.research-track-fill,.network .target{transition:none!important}
+  .studio-weeks{scroll-behavior:auto!important}
+}
+
+@media(prefers-reduced-transparency:reduce){
+  .site-header{background:#0d0d0b!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+
+@media(prefers-contrast:more){
+  .site-header{background:#090908!important;border-bottom:1px solid #66665e!important}
+  .research-track-line{background:#77776d}
+  .research-track-knob{border-color:var(--accent);box-shadow:none}
+}
