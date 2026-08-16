@@ -177,3 +177,221 @@ async function loadResearchFeed() {
 }
 
 loadResearchFeed();
+
+// ---------------------------------------------------------------------------
+// Apple-inspired interaction layer
+// Direct response, interruptible spring motion, velocity handoff and materials.
+// ---------------------------------------------------------------------------
+
+(function installAppleInteractionLayer(){
+  // Load separately so the original visual system remains easy to revert.
+  if (!document.querySelector('link[data-apple-motion]')) {
+    const sheet = document.createElement('link');
+    sheet.rel = 'stylesheet';
+    sheet.href = 'apple-motion.css';
+    sheet.dataset.appleMotion = 'true';
+    document.head.appendChild(sheet);
+  }
+
+  const pressables = document.querySelectorAll('.button,.lab-btn,.week-actions a,.project-card,.profile-links a,.pub-links a,.nav a,.research-now-link');
+  pressables.forEach(el => {
+    el.classList.add('motion-pressable');
+    const press = () => el.classList.add('is-pressed');
+    const release = () => el.classList.remove('is-pressed');
+    el.addEventListener('pointerdown', press, {passive:true});
+    el.addEventListener('pointerup', release, {passive:true});
+    el.addEventListener('pointercancel', release, {passive:true});
+    el.addEventListener('pointerleave', release, {passive:true});
+    el.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') press(); });
+    el.addEventListener('keyup', release);
+    el.addEventListener('blur', release);
+  });
+
+  // ---- Direct-manipulation research state scrubber ----
+  const controls = document.querySelector('.lab-controls');
+  if (controls && network && status && !document.querySelector('.research-scrubber')) {
+    const scrubber = document.createElement('div');
+    scrubber.className = 'research-scrubber';
+    scrubber.innerHTML = `
+      <div class="research-scrubber-top"><span>Drag model state</span><strong>Direct manipulation</strong></div>
+      <div class="research-track" role="slider" tabindex="0" aria-label="Model state" aria-valuemin="0" aria-valuemax="2" aria-valuenow="0" aria-valuetext="Trained">
+        <div class="research-track-line"></div>
+        <div class="research-track-fill"></div>
+        <div class="research-track-knob"></div>
+      </div>
+      <div class="research-stops"><span>Trained</span><span>Unlearned</span><span>INT4 recovery</span></div>
+    `;
+    controls.insertAdjacentElement('afterend', scrubber);
+
+    const track = scrubber.querySelector('.research-track');
+    const fill = scrubber.querySelector('.research-track-fill');
+    const knob = scrubber.querySelector('.research-track-knob');
+    const targetVisuals = [...network.querySelectorAll('.target')];
+    let value = 0;
+    let dragging = false;
+    let springFrame = 0;
+    let history = [];
+
+    const clamp01 = n => Math.max(0, Math.min(1, n));
+    const stateName = p => p < .25 ? 'Trained' : p < .75 ? 'Unlearned' : 'INT4 recovery';
+
+    function targetOpacityAt(p){
+      if (p <= .5) return 1 + (.08 - 1) * (p / .5);
+      return .08 + (.68 - .08) * ((p - .5) / .5);
+    }
+
+    function renderValue(p, continuous = false){
+      value = clamp01(p);
+      fill.style.width = `${value * 100}%`;
+      knob.style.left = `${value * 100}%`;
+      const opacity = targetOpacityAt(value);
+      targetVisuals.forEach(el => { el.style.opacity = String(opacity); });
+      network.classList.toggle('is-scrubbing', continuous);
+      buttons.forEach(b => b.classList.remove('active'));
+      const nearest = value < .25 ? 0 : value < .75 ? 1 : 2;
+      if (buttons[nearest]) buttons[nearest].classList.add('active');
+      const label = stateName(value);
+      track.setAttribute('aria-valuenow', String(nearest));
+      track.setAttribute('aria-valuetext', label);
+      if (value < .25) status.textContent = 'Target knowledge present';
+      else if (value < .75) status.textContent = 'Target signal progressively suppressed';
+      else status.textContent = 'Residual target signal re-emerges';
+    }
+
+    function springTo(target, initialVelocity = 0){
+      cancelAnimationFrame(springFrame);
+      if (reduceMotion) { renderValue(target, false); return; }
+      let x = value;
+      let v = initialVelocity;
+      let last = performance.now();
+      const stiffness = 190;
+      const damping = 28;
+      const mass = 1;
+      const step = now => {
+        const dt = Math.min((now - last) / 1000, .032);
+        last = now;
+        const force = -stiffness * (x - target) - damping * v;
+        v += (force / mass) * dt;
+        x += v * dt;
+        renderValue(x, true);
+        if (Math.abs(v) < .006 && Math.abs(target - x) < .0015) {
+          renderValue(target, false);
+          return;
+        }
+        springFrame = requestAnimationFrame(step);
+      };
+      springFrame = requestAnimationFrame(step);
+    }
+
+    function pointerToValue(e){
+      const r = track.getBoundingClientRect();
+      return clamp01((e.clientX - r.left) / r.width);
+    }
+
+    track.addEventListener('pointerdown', e => {
+      cancelAnimationFrame(springFrame);
+      dragging = true;
+      history = [{x:e.clientX,t:performance.now()}];
+      track.classList.add('is-dragging');
+      track.setPointerCapture(e.pointerId);
+      renderValue(pointerToValue(e), true);
+    });
+
+    track.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const now = performance.now();
+      history.push({x:e.clientX,t:now});
+      if (history.length > 5) history.shift();
+      renderValue(pointerToValue(e), true);
+    });
+
+    const finishDrag = e => {
+      if (!dragging) return;
+      dragging = false;
+      track.classList.remove('is-dragging');
+      const r = track.getBoundingClientRect();
+      let pxVelocity = 0;
+      if (history.length >= 2) {
+        const a = history[0], b = history[history.length - 1];
+        const dt = Math.max(1, b.t - a.t);
+        pxVelocity = (b.x - a.x) / dt * 1000;
+      }
+      const normalizedVelocity = pxVelocity / Math.max(1, r.width);
+      const projected = clamp01(value + normalizedVelocity * .18);
+      const stops = [0,.5,1];
+      const target = stops.reduce((best,s) => Math.abs(s-projected) < Math.abs(best-projected) ? s : best, stops[0]);
+      springTo(target, normalizedVelocity);
+      try { track.releasePointerCapture(e.pointerId); } catch {}
+    };
+    track.addEventListener('pointerup', finishDrag);
+    track.addEventListener('pointercancel', finishDrag);
+
+    track.addEventListener('keydown', e => {
+      const stops = [0,.5,1];
+      let idx = stops.reduce((best,i,ix) => Math.abs(i-value) < Math.abs(stops[best]-value) ? ix : best,0);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { idx = Math.min(2, idx + 1); e.preventDefault(); springTo(stops[idx]); }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { idx = Math.max(0, idx - 1); e.preventDefault(); springTo(stops[idx]); }
+      if (e.key === 'Home') { e.preventDefault(); springTo(0); }
+      if (e.key === 'End') { e.preventDefault(); springTo(1); }
+    });
+
+    // Existing buttons now re-target the same spring rather than jumping states.
+    buttons.forEach((b,index) => b.addEventListener('click', () => springTo([0,.5,1][index])));
+    renderValue(0,false);
+  }
+
+  // ---- Momentum + interruptibility for the mobile Teaching Studio ----
+  const deck = document.querySelector('.studio-weeks');
+  if (deck) {
+    let active = false;
+    let startX = 0;
+    let startScroll = 0;
+    let samples = [];
+    let momentumFrame = 0;
+
+    const stopMomentum = () => cancelAnimationFrame(momentumFrame);
+
+    deck.addEventListener('pointerdown', e => {
+      if (window.innerWidth > 760) return;
+      stopMomentum();
+      active = true;
+      startX = e.clientX;
+      startScroll = deck.scrollLeft;
+      samples = [{x:e.clientX,t:performance.now()}];
+      deck.classList.add('is-dragging');
+      deck.setPointerCapture(e.pointerId);
+    });
+
+    deck.addEventListener('pointermove', e => {
+      if (!active || window.innerWidth > 760) return;
+      const dx = e.clientX - startX;
+      deck.scrollLeft = startScroll - dx;
+      const now = performance.now();
+      samples.push({x:e.clientX,t:now});
+      if (samples.length > 5) samples.shift();
+    });
+
+    const endDeckDrag = e => {
+      if (!active) return;
+      active = false;
+      deck.classList.remove('is-dragging');
+      let velocity = 0;
+      if (samples.length >= 2) {
+        const a = samples[0], b = samples[samples.length-1];
+        velocity = -(b.x-a.x) / Math.max(1,b.t-a.t) * 16;
+      }
+      if (!reduceMotion && Math.abs(velocity) > .35) {
+        let v = velocity;
+        const animate = () => {
+          deck.scrollLeft += v;
+          v *= .93;
+          if (Math.abs(v) > .25) momentumFrame = requestAnimationFrame(animate);
+        };
+        momentumFrame = requestAnimationFrame(animate);
+      }
+      try { deck.releasePointerCapture(e.pointerId); } catch {}
+    };
+    deck.addEventListener('pointerup', endDeckDrag);
+    deck.addEventListener('pointercancel', endDeckDrag);
+  }
+})();
