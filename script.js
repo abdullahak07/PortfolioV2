@@ -1,393 +1,445 @@
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+(() => {
+  'use strict';
 
-const reveals = document.querySelectorAll('.reveal');
-if (reduceMotion) reveals.forEach(el => el.classList.add('visible'));
-else {
-  const io = new IntersectionObserver(entries => entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
-  }), { threshold: .08 });
-  reveals.forEach(el => io.observe(el));
-}
+  const $ = (selector, scope = document) => scope.querySelector(selector);
+  const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(pointer:fine)').matches;
+  const gsap = window.gsap;
+  const ScrollTrigger = window.ScrollTrigger;
+  const Lenis = window.Lenis;
 
-const progress = document.querySelector('.scroll-progress span');
-window.addEventListener('scroll', () => {
-  const d = document.documentElement;
-  const p = d.scrollTop / (d.scrollHeight - d.clientHeight);
-  progress.style.width = `${Math.max(0, Math.min(1, p)) * 100}%`;
-}, { passive: true });
+  const year = $('#year');
+  if (year) year.textContent = new Date().getFullYear();
 
-const menu = document.querySelector('.menu-toggle');
-const nav = document.querySelector('.nav');
-menu.addEventListener('click', () => {
-  const open = nav.classList.toggle('open');
-  menu.setAttribute('aria-expanded', String(open));
-});
-nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-  nav.classList.remove('open'); menu.setAttribute('aria-expanded','false');
-}));
-
-document.getElementById('year').textContent = new Date().getFullYear();
-
-const svg = document.querySelector('.network svg');
-const nodeGroup = svg.querySelector('.nodes');
-const linkGroup = svg.querySelector('.links');
-const network = document.querySelector('.network');
-const status = document.getElementById('labStatus');
-const buttons = [...document.querySelectorAll('.lab-btn')];
-
-const nodes = [
-  [72,82,0],[78,170,0],[72,255,0],[82,344,0],
-  [210,58,0],[215,128,1],[215,206,0],[220,284,1],[210,365,0],
-  [370,78,0],[375,152,1],[372,232,1],[378,312,0],[370,372,0],
-  [525,112,0],[528,204,1],[525,298,0],
-  [650,160,0],[650,266,0]
-].map((v,i)=>({id:i,x:v[0],y:v[1],target:!!v[2]}));
-const layers = [[0,1,2,3],[4,5,6,7,8],[9,10,11,12,13],[14,15,16],[17,18]];
-const edges = [];
-for(let l=0;l<layers.length-1;l++){
-  layers[l].forEach(a=>layers[l+1].forEach(b=>{
-    const target = nodes[a].target || nodes[b].target;
-    edges.push({a,b,target});
-  }));
-}
-const NS='http://www.w3.org/2000/svg';
-edges.forEach(e=>{
-  const line=document.createElementNS(NS,'line');
-  line.setAttribute('x1',nodes[e.a].x);line.setAttribute('y1',nodes[e.a].y);
-  line.setAttribute('x2',nodes[e.b].x);line.setAttribute('y2',nodes[e.b].y);
-  line.setAttribute('class',`edge${e.target?' target':''}`); linkGroup.appendChild(line);
-});
-nodes.forEach(n=>{
-  const c=document.createElementNS(NS,'circle');
-  c.setAttribute('cx',n.x);c.setAttribute('cy',n.y);c.setAttribute('r',n.target?7:5);
-  c.setAttribute('class',`node${n.target?' target':''}`); nodeGroup.appendChild(c);
-});
-
-function setState(s){
-  buttons.forEach(b=>b.classList.toggle('active',b.dataset.state===s));
-  network.classList.remove('forgotten','recovered');
-  if(s==='forgotten'){network.classList.add('forgotten');status.textContent='Target knowledge appears suppressed';}
-  else if(s==='recovered'){network.classList.add('recovered');status.textContent='Residual target signal re-emerges';}
-  else status.textContent='Target knowledge present';
-}
-buttons.forEach(b=>b.addEventListener('click',()=>setState(b.dataset.state)));
-setState('trained');
-
-const arxivCategoryNames = {
-  'cs.LG':'Machine Learning',
-  'cs.AI':'Artificial Intelligence',
-  'cs.CV':'Computer Vision',
-  'cs.CL':'Computation & Language',
-  'cs.CR':'Cryptography & Security',
-  'stat.ML':'Machine Learning',
-};
-
-function escapeHtml(value = '') {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-function formatResearchDate(value) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Recent';
-  return new Intl.DateTimeFormat('en-AU', { month:'short', year:'numeric' }).format(date);
-}
-
-function renderResearchFeed(data) {
-  const section = document.querySelector('.publications-section');
-  const head = section?.querySelector('.section-head');
-  const papers = Array.isArray(data?.papers) ? data.papers.slice(0, 4) : [];
-  if (!section || !head || !data?.available || !papers.length) return;
-
-  document.getElementById('researchNow')?.remove();
-
-  const panel = document.createElement('section');
-  panel.id = 'researchNow';
-  panel.className = 'research-now';
-  panel.setAttribute('aria-label', 'Latest research from arXiv');
-
-  const paperRows = papers.map((paper, index) => {
-    const categories = (paper.categories || []).slice(0, 2)
-      .map(code => `<span>${escapeHtml(arxivCategoryNames[code] || code)}</span>`)
-      .join('');
-    const coauthors = (paper.authors || [])
-      .filter(name => !/abdullah\s+(ahmad\s+)?khan/i.test(name))
-      .slice(0, 3)
-      .map(escapeHtml)
-      .join(' · ');
-
-    return `
-      <article class="research-now-paper">
-        <div class="research-now-meta">
-          <span class="research-now-date">${formatResearchDate(paper.updated || paper.published)}</span>
-          ${index === 0 ? '<span class="research-now-latest">Latest</span>' : ''}
-        </div>
-        <div class="research-now-copy">
-          <div class="research-now-tags">${categories}</div>
-          <h4>${escapeHtml(paper.title)}</h4>
-          ${coauthors ? `<p>with ${coauthors}</p>` : ''}
-        </div>
-        <a class="research-now-link" href="${escapeHtml(paper.url)}" target="_blank" rel="noopener" aria-label="Read ${escapeHtml(paper.title)} on arXiv">Read paper <span>↗</span></a>
-      </article>
-    `;
-  }).join('');
-
-  panel.innerHTML = `
-    <div class="research-now-intro">
-      <div>
-        <span class="research-now-signal" aria-hidden="true"></span>
-        <span class="eyebrow">Live from arXiv</span>
-      </div>
-      <h3>Research, while it’s <em>moving.</em></h3>
-      <p>Current preprints and revisions pulled from the arXiv metadata feed. No citation counters—just the work itself.</p>
-      <a href="https://arxiv.org/search/?query=Abdullah+Ahmad+Khan&searchtype=author" target="_blank" rel="noopener">View arXiv search ↗</a>
-    </div>
-    <div class="research-now-list">${paperRows}</div>
-  `;
-
-  head.insertAdjacentElement('afterend', panel);
-}
-
-async function loadResearchFeed() {
-  const section = document.querySelector('.publications-section');
-  if (!section) return;
-
-  const controller = new AbortController();
-  const timer = window.setTimeout(() => controller.abort(), 8000);
-
-  try {
-    const response = await fetch('/api/research-feed', {
-      headers: { accept: 'application/json' },
-      signal: controller.signal,
+  // Build the voice waveform in JS so the markup stays maintainable.
+  const waveBars = $('.wave-bars');
+  if (waveBars) {
+    const heights = [18,28,46,68,42,78,54,34,62,88,52,29,74,96,61,41,82,56,32,67,91,48,27,58];
+    waveBars.textContent = '';
+    heights.forEach((height, index) => {
+      const bar = document.createElement('i');
+      bar.style.setProperty('--i', String(index));
+      bar.style.height = `${height}%`;
+      waveBars.appendChild(bar);
     });
-    if (!response.ok) return;
-    const data = await response.json();
-    renderResearchFeed(data);
-  } catch (error) {
-    console.info('Live arXiv feed unavailable; static publications retained.', error?.message || error);
-  } finally {
-    window.clearTimeout(timer);
-  }
-}
-
-loadResearchFeed();
-
-(function installAppleInteractionLayer(){
-  if (!document.querySelector('link[data-apple-motion]')) {
-    const sheet = document.createElement('link');
-    sheet.rel = 'stylesheet';
-    sheet.href = 'apple-motion.css';
-    sheet.dataset.appleMotion = 'true';
-    document.head.appendChild(sheet);
   }
 
-  const pressables = document.querySelectorAll('.button,.lab-btn,.week-actions a,.project-card,.profile-links a,.pub-links a,.nav a,.research-now-link');
-  pressables.forEach(el => {
-    el.classList.add('motion-pressable');
-    const press = () => el.classList.add('is-pressed');
-    const release = () => el.classList.remove('is-pressed');
-    el.addEventListener('pointerdown', press, {passive:true});
-    el.addEventListener('pointerup', release, {passive:true});
-    el.addEventListener('pointercancel', release, {passive:true});
-    el.addEventListener('pointerleave', release, {passive:true});
-    el.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') press(); });
-    el.addEventListener('keyup', release);
-    el.addEventListener('blur', release);
+  const body = document.body;
+  const preloader = $('.preloader');
+  const preloaderInner = $('.preloader-inner');
+  const preloadBar = $('.preloader-line i');
+  const heroLines = $$('.hero-line > span');
+  const heroRevealGroups = $$('.hero .reveal-group');
+  let introPlayed = false;
+
+  function revealPage() {
+    if (introPlayed) return;
+    introPlayed = true;
+
+    if (reducedMotion || !gsap) {
+      body.classList.remove('is-loading');
+      body.classList.add('is-ready');
+      return;
+    }
+
+    gsap.set(heroLines, { yPercent: 118, rotate: 1.2 });
+    gsap.set(heroRevealGroups, { y: 22, opacity: 0 });
+    gsap.set(preloadBar, { width: '0%' });
+
+    gsap.timeline({ defaults: { ease: 'power4.out' } })
+      .to(preloadBar, { width: '100%', duration: .55, ease: 'power2.inOut' })
+      .to(preloaderInner, { y: -24, opacity: 0, duration: .45 }, '+=.08')
+      .to(preloader, { yPercent: -100, duration: .85, ease: 'power4.inOut' }, '-=.12')
+      .add(() => {
+        body.classList.remove('is-loading');
+        body.classList.add('is-ready');
+      }, '-=.45')
+      .to(heroLines, { yPercent: 0, rotate: 0, duration: 1.05, stagger: .09 }, '-=.48')
+      .to(heroRevealGroups, { y: 0, opacity: 1, duration: .72, stagger: .08 }, '-=.72');
+  }
+
+  window.addEventListener('load', () => window.setTimeout(revealPage, 180), { once: true });
+  window.setTimeout(revealPage, 1700);
+
+  let lenis = null;
+  if (!reducedMotion && Lenis) {
+    lenis = new Lenis({
+      duration: 1.05,
+      smoothWheel: true,
+      touchMultiplier: 1.2,
+      wheelMultiplier: .9,
+      syncTouch: false,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+    });
+
+    if (gsap && ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add(time => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      const raf = time => { lenis.raf(time); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+    }
+  } else if (gsap && ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+  }
+
+  function scrollToElement(target, offset = 0) {
+    if (!target) return;
+    if (lenis) lenis.scrollTo(target, { offset, duration: 1.15 });
+    else target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  $$('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', event => {
+      const id = link.getAttribute('href');
+      if (!id || id === '#') return;
+      const target = $(id);
+      if (!target) return;
+      event.preventDefault();
+      scrollToElement(target, id === '#top' ? 0 : -40);
+    });
   });
 
-  const controls = document.querySelector('.lab-controls');
-  if (controls && network && status && !document.querySelector('.research-scrubber')) {
-    const scrubber = document.createElement('div');
-    scrubber.className = 'research-scrubber';
-    scrubber.innerHTML = `
-      <div class="research-scrubber-top"><span>Drag model state</span><strong>Direct manipulation</strong></div>
-      <div class="research-track" role="slider" tabindex="0" aria-label="Model state" aria-valuemin="0" aria-valuemax="2" aria-valuenow="0" aria-valuetext="Trained">
-        <div class="research-track-line"></div>
-        <div class="research-track-fill"></div>
-        <div class="research-track-knob"></div>
-      </div>
-      <div class="research-stops"><span>Trained</span><span>Unlearned</span><span>INT4 recovery</span></div>
-    `;
-    controls.insertAdjacentElement('afterend', scrubber);
+  const menuToggle = $('.menu-toggle');
+  const mobileNav = $('.mobile-nav');
+  function closeMobileNav() {
+    if (!mobileNav || !menuToggle) return;
+    mobileNav.classList.remove('is-open');
+    mobileNav.setAttribute('aria-hidden', 'true');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+  menuToggle?.addEventListener('click', () => {
+    const open = !mobileNav.classList.contains('is-open');
+    mobileNav.classList.toggle('is-open', open);
+    mobileNav.setAttribute('aria-hidden', String(!open));
+    menuToggle.setAttribute('aria-expanded', String(open));
+  });
+  $$('.mobile-nav a').forEach(a => a.addEventListener('click', closeMobileNav));
 
-    const track = scrubber.querySelector('.research-track');
-    const fill = scrubber.querySelector('.research-track-fill');
-    const knob = scrubber.querySelector('.research-track-knob');
-    const targetVisuals = [...network.querySelectorAll('.target')];
-    let value = 0;
-    let dragging = false;
-    let springFrame = 0;
-    let history = [];
-
-    const clamp01 = n => Math.max(0, Math.min(1, n));
-    const stateName = p => p < .25 ? 'Trained' : p < .75 ? 'Unlearned' : 'INT4 recovery';
-
-    function targetOpacityAt(p){
-      if (p <= .5) return 1 + (.08 - 1) * (p / .5);
-      return .08 + (.68 - .08) * ((p - .5) / .5);
+  const header = $('[data-header]');
+  let previousY = window.scrollY;
+  let headerTicking = false;
+  function updateHeader() {
+    const y = window.scrollY;
+    const movingDown = y > previousY;
+    header?.classList.toggle('is-hidden', movingDown && y > 260 && !mobileNav?.classList.contains('is-open'));
+    previousY = y;
+    headerTicking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!headerTicking) {
+      requestAnimationFrame(updateHeader);
+      headerTicking = true;
     }
+  }, { passive: true });
 
-    function renderValue(p, continuous = false){
-      value = clamp01(p);
-      fill.style.width = `${value * 100}%`;
-      knob.style.left = `${value * 100}%`;
-      const opacity = targetOpacityAt(value);
-      targetVisuals.forEach(el => { el.style.opacity = String(opacity); });
-      network.classList.toggle('is-scrubbing', continuous);
-      buttons.forEach(b => b.classList.remove('active'));
-      const nearest = value < .25 ? 0 : value < .75 ? 1 : 2;
-      if (buttons[nearest]) buttons[nearest].classList.add('active');
-      const label = stateName(value);
-      track.setAttribute('aria-valuenow', String(nearest));
-      track.setAttribute('aria-valuetext', label);
-      if (value < .25) status.textContent = 'Target knowledge present';
-      else if (value < .75) status.textContent = 'Target signal progressively suppressed';
-      else status.textContent = 'Residual target signal re-emerges';
+  const cursorDot = $('.cursor-dot');
+  const cursorRing = $('.cursor-ring');
+  if (finePointer && !reducedMotion && cursorDot && cursorRing) {
+    body.classList.add('has-pointer');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let ringX = mouseX;
+    let ringY = mouseY;
+
+    window.addEventListener('pointermove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursorDot.style.transform = `translate(${mouseX - 2.5}px, ${mouseY - 2.5}px)`;
+    }, { passive: true });
+
+    const cursorFrame = () => {
+      ringX += (mouseX - ringX) * .16;
+      ringY += (mouseY - ringY) * .16;
+      cursorRing.style.transform = `translate(${ringX - 17}px, ${ringY - 17}px)`;
+      requestAnimationFrame(cursorFrame);
+    };
+    requestAnimationFrame(cursorFrame);
+
+    $$('a, button, [data-tilt]').forEach(el => {
+      el.addEventListener('pointerenter', () => body.classList.add('cursor-active'));
+      el.addEventListener('pointerleave', () => body.classList.remove('cursor-active'));
+    });
+
+    $$('.magnetic').forEach(el => {
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width / 2) * .16;
+        const y = (e.clientY - r.top - r.height / 2) * .16;
+        if (gsap) gsap.to(el, { x, y, duration: .35, ease: 'power3.out', overwrite: true });
+        else el.style.transform = `translate(${x}px,${y}px)`;
+      });
+      el.addEventListener('pointerleave', () => {
+        if (gsap) gsap.to(el, { x: 0, y: 0, duration: .65, ease: 'elastic.out(1,.5)' });
+        else el.style.transform = '';
+      });
+    });
+  }
+
+  class AmbientField {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d', { alpha: true });
+      this.dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+      this.w = 0;
+      this.h = 0;
+      this.nodes = [];
+      this.pointer = { x: -9999, y: -9999, active: false };
+      this.targetColor = [201,255,102];
+      this.color = [201,255,102];
+      this.frame = 0;
+      this.resize = this.resize.bind(this);
+      this.draw = this.draw.bind(this);
+      window.addEventListener('resize', this.resize, { passive: true });
+      window.addEventListener('pointermove', e => {
+        this.pointer.x = e.clientX;
+        this.pointer.y = e.clientY;
+        this.pointer.active = true;
+      }, { passive: true });
+      window.addEventListener('pointerleave', () => { this.pointer.active = false; }, { passive: true });
+      this.resize();
+      this.seed();
+      this.draw();
     }
-
-    function springTo(target, initialVelocity = 0){
-      cancelAnimationFrame(springFrame);
-      if (reduceMotion) { renderValue(target, false); return; }
-      let x = value;
-      let v = initialVelocity;
-      let last = performance.now();
-      const stiffness = 190;
-      const damping = 28;
-      const mass = 1;
-      const step = now => {
-        const dt = Math.min((now - last) / 1000, .032);
-        last = now;
-        const force = -stiffness * (x - target) - damping * v;
-        v += (force / mass) * dt;
-        x += v * dt;
-        renderValue(x, true);
-        if (Math.abs(v) < .006 && Math.abs(target - x) < .0015) {
-          renderValue(target, false);
-          return;
-        }
-        springFrame = requestAnimationFrame(step);
+    resize() {
+      this.w = window.innerWidth;
+      this.h = window.innerHeight;
+      this.canvas.width = Math.floor(this.w * this.dpr);
+      this.canvas.height = Math.floor(this.h * this.dpr);
+      this.canvas.style.width = `${this.w}px`;
+      this.canvas.style.height = `${this.h}px`;
+      this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    }
+    seed() {
+      const count = this.w < 800 ? 24 : Math.min(72, Math.floor(this.w / 24));
+      this.nodes = Array.from({ length: count }, (_, i) => ({
+        x: Math.random() * this.w,
+        y: Math.random() * this.h,
+        vx: (Math.random() - .5) * .14,
+        vy: (Math.random() - .5) * .14,
+        r: i % 11 === 0 ? 1.5 : .75,
+        depth: .35 + Math.random() * .9
+      }));
+    }
+    setScene(scene) {
+      const colors = {
+        hero:[201,255,102], research:[201,255,102], publications:[88,112,34],
+        teaching:[121,231,255], projects:[201,255,102], about:[121,231,255], closing:[201,255,102]
       };
-      springFrame = requestAnimationFrame(step);
+      this.targetColor = colors[scene] || colors.hero;
     }
+    draw() {
+      const ctx = this.ctx;
+      ctx.clearRect(0, 0, this.w, this.h);
+      for (let c = 0; c < 3; c++) this.color[c] += (this.targetColor[c] - this.color[c]) * .025;
+      const [r,g,b] = this.color.map(Math.round);
+      const threshold = this.w < 800 ? 105 : 145;
 
-    function pointerToValue(e){
-      const r = track.getBoundingClientRect();
-      return clamp01((e.clientX - r.left) / r.width);
-    }
+      this.nodes.forEach((n, index) => {
+        n.x += n.vx * n.depth;
+        n.y += n.vy * n.depth + Math.sin((this.frame + index * 13) * .003) * .015;
+        if (n.x < -30) n.x = this.w + 30;
+        if (n.x > this.w + 30) n.x = -30;
+        if (n.y < -30) n.y = this.h + 30;
+        if (n.y > this.h + 30) n.y = -30;
 
-    track.addEventListener('pointerdown', e => {
-      cancelAnimationFrame(springFrame);
-      dragging = true;
-      history = [{x:e.clientX,t:performance.now()}];
-      track.classList.add('is-dragging');
-      track.setPointerCapture(e.pointerId);
-      renderValue(pointerToValue(e), true);
-    });
+        if (this.pointer.active && finePointer) {
+          const dx = n.x - this.pointer.x;
+          const dy = n.y - this.pointer.y;
+          const d2 = dx*dx + dy*dy;
+          if (d2 < 17000 && d2 > 1) {
+            const push = (17000 - d2) / 17000 * .22;
+            const d = Math.sqrt(d2);
+            n.x += dx / d * push * 4;
+            n.y += dy / d * push * 4;
+          }
+        }
 
-    track.addEventListener('pointermove', e => {
-      if (!dragging) return;
-      const now = performance.now();
-      history.push({x:e.clientX,t:now});
-      if (history.length > 5) history.shift();
-      renderValue(pointerToValue(e), true);
-    });
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * n.depth, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r},${g},${b},${.12 * n.depth})`;
+        ctx.fill();
+      });
 
-    const finishDrag = e => {
-      if (!dragging) return;
-      dragging = false;
-      track.classList.remove('is-dragging');
-      const r = track.getBoundingClientRect();
-      let pxVelocity = 0;
-      if (history.length >= 2) {
-        const a = history[0], b = history[history.length - 1];
-        const dt = Math.max(1, b.t - a.t);
-        pxVelocity = (b.x - a.x) / dt * 1000;
+      for (let i = 0; i < this.nodes.length; i++) {
+        for (let j = i + 1; j < this.nodes.length; j++) {
+          const a = this.nodes[i];
+          const bNode = this.nodes[j];
+          const dx = a.x - bNode.x;
+          const dy = a.y - bNode.y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if (d < threshold) {
+            ctx.beginPath();
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(bNode.x,bNode.y);
+            ctx.strokeStyle = `rgba(${r},${g},${b},${(1-d/threshold)*.055})`;
+            ctx.lineWidth = .55;
+            ctx.stroke();
+          }
+        }
       }
-      const normalizedVelocity = pxVelocity / Math.max(1, r.width);
-      const projected = clamp01(value + normalizedVelocity * .18);
-      const stops = [0,.5,1];
-      const target = stops.reduce((best,s) => Math.abs(s-projected) < Math.abs(best-projected) ? s : best, stops[0]);
-      springTo(target, normalizedVelocity);
-      try { track.releasePointerCapture(e.pointerId); } catch {}
-    };
-    track.addEventListener('pointerup', finishDrag);
-    track.addEventListener('pointercancel', finishDrag);
-
-    track.addEventListener('keydown', e => {
-      const stops = [0,.5,1];
-      let idx = stops.reduce((best,i,ix) => Math.abs(i-value) < Math.abs(stops[best]-value) ? ix : best,0);
-      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { idx = Math.min(2, idx + 1); e.preventDefault(); springTo(stops[idx]); }
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { idx = Math.max(0, idx - 1); e.preventDefault(); springTo(stops[idx]); }
-      if (e.key === 'Home') { e.preventDefault(); springTo(0); }
-      if (e.key === 'End') { e.preventDefault(); springTo(1); }
-    });
-
-    buttons.forEach((b,index) => b.addEventListener('click', () => springTo([0,.5,1][index])));
-    renderValue(0,false);
+      this.frame++;
+      requestAnimationFrame(this.draw);
+    }
   }
 
-  const deck = document.querySelector('.studio-weeks');
-  if (deck) {
-    let active = false;
-    let startX = 0;
-    let startScroll = 0;
-    let samples = [];
-    let momentumFrame = 0;
+  const field = !reducedMotion && $('#ambientField') ? new AmbientField($('#ambientField')) : null;
+  const scenes = $$('.scene[data-scene]');
+  const navLinks = $$('.nav a[href^="#"]');
 
-    const stopMomentum = () => cancelAnimationFrame(momentumFrame);
-
-    deck.addEventListener('pointerdown', e => {
-      if (window.innerWidth > 760) return;
-      stopMomentum();
-      active = true;
-      startX = e.clientX;
-      startScroll = deck.scrollLeft;
-      samples = [{x:e.clientX,t:performance.now()}];
-      deck.classList.add('is-dragging');
-      deck.setPointerCapture(e.pointerId);
-    });
-
-    deck.addEventListener('pointermove', e => {
-      if (!active || window.innerWidth > 760) return;
-      const dx = e.clientX - startX;
-      deck.scrollLeft = startScroll - dx;
-      const now = performance.now();
-      samples.push({x:e.clientX,t:now});
-      if (samples.length > 5) samples.shift();
-    });
-
-    const endDeckDrag = e => {
-      if (!active) return;
-      active = false;
-      deck.classList.remove('is-dragging');
-      let velocity = 0;
-      if (samples.length >= 2) {
-        const a = samples[0], b = samples[samples.length-1];
-        velocity = -(b.x-a.x) / Math.max(1,b.t-a.t) * 16;
-      }
-      if (!reduceMotion && Math.abs(velocity) > .35) {
-        let v = velocity;
-        const animate = () => {
-          deck.scrollLeft += v;
-          v *= .93;
-          if (Math.abs(v) > .25) momentumFrame = requestAnimationFrame(animate);
-        };
-        momentumFrame = requestAnimationFrame(animate);
-      }
-      try { deck.releasePointerCapture(e.pointerId); } catch {}
-    };
-    deck.addEventListener('pointerup', endDeckDrag);
-    deck.addEventListener('pointercancel', endDeckDrag);
+  if ('IntersectionObserver' in window) {
+    const sceneObserver = new IntersectionObserver(entries => {
+      const visible = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      const scene = visible.target.dataset.scene;
+      field?.setScene(scene);
+      const id = visible.target.id;
+      navLinks.forEach(link => link.classList.toggle('is-active', Boolean(id) && link.getAttribute('href') === `#${id}`));
+    }, { threshold:[.12,.3,.5,.7] });
+    scenes.forEach(scene => sceneObserver.observe(scene));
   }
+
+  if (!reducedMotion && gsap && ScrollTrigger) {
+    gsap.to('.hero-line:nth-child(1) > span', { xPercent:-7, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
+    gsap.to('.hero-line:nth-child(2) > span', { xPercent:5, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
+    gsap.to('.hero-line:nth-child(3) > span', { xPercent:-4, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
+    gsap.to('.portrait-frame img', { yPercent:8, scale:1.04, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1.2 } });
+    gsap.to('.portrait-scan', { y:'360%', ease:'none', scrollTrigger:{ trigger:'.hero-portrait', start:'top 75%', end:'bottom 20%', scrub:1 } });
+
+    $$('.section-intro').forEach(intro => {
+      const parts = $$('.section-kicker,.section-title,.section-copy', intro);
+      gsap.from(parts, { y:58, opacity:0, duration:1, stagger:.08, ease:'power4.out', scrollTrigger:{ trigger:intro, start:'top 78%', once:true } });
+    });
+
+    $$('.publication-row').forEach((row, index) => {
+      gsap.from(row.children, { y:40, opacity:0, duration:.8, stagger:.055, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 84%', once:true } });
+      const graphic = $('.pub-motion', row);
+      if (graphic) gsap.from(graphic, { x:index % 2 ? -28 : 28, duration:1, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 84%', once:true } });
+    });
+
+    $$('.teaching-roles article').forEach((card, i) => {
+      gsap.from(card, { y:50, opacity:0, duration:.9, delay:i*.07, ease:'power3.out', scrollTrigger:{ trigger:card, start:'top 82%', once:true } });
+    });
+
+    $$('.project-case').forEach((project, i) => {
+      const copy = $('.project-copy', project);
+      const visual = $('.project-visual', project);
+      gsap.from(copy, { y:65, opacity:0, duration:1, ease:'power4.out', scrollTrigger:{ trigger:project, start:'top 76%', once:true } });
+      gsap.from(visual, { clipPath:i%2 ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)', duration:1.15, ease:'power4.inOut', scrollTrigger:{ trigger:project, start:'top 79%', once:true } });
+    });
+
+    gsap.from('.about-lead', { y:60, opacity:0, duration:1, ease:'power4.out', scrollTrigger:{ trigger:'.about-grid', start:'top 78%', once:true } });
+    gsap.from('.about-copy > *', { y:45, opacity:0, duration:.85, stagger:.1, ease:'power3.out', scrollTrigger:{ trigger:'.about-grid', start:'top 75%', once:true } });
+    $$('.timeline article').forEach(row => gsap.from(row, { x:-26, opacity:0, duration:.7, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 88%', once:true } }));
+    gsap.from('.closing h2 span', { yPercent:110, opacity:0, duration:1.05, stagger:.11, ease:'power4.out', scrollTrigger:{ trigger:'.closing', start:'top 62%', once:true } });
+
+    const rail = $('[data-horizontal-rail]');
+    const track = rail ? $('.rail-track', rail) : null;
+    if (rail && track && window.innerWidth > 800) {
+      const horizontalDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + Math.max(40, window.innerWidth * .08));
+      gsap.to(track, {
+        x:() => -horizontalDistance(),
+        ease:'none',
+        scrollTrigger:{
+          trigger:rail,
+          start:'top top',
+          end:() => `+=${horizontalDistance() + window.innerHeight * .8}`,
+          scrub:1,
+          pin:true,
+          anticipatePin:1,
+          invalidateOnRefresh:true
+        }
+      });
+    }
+  }
+
+  const machine = $('.memory-machine');
+  const stateLabel = $('#machineStateLabel');
+  const targetSignal = $('#targetSignal');
+  const retainSignal = $('#retainSignal');
+  const auditSignal = $('#auditSignal');
+  const steps = $$('.research-step');
+  const tabs = $$('.machine-tab');
+  const states = {
+    trained:{ label:'Original model', target:'100%', retain:'100%', audit:'Output' },
+    suppressed:{ label:'Selective forgetting', target:'↓ target', retain:'Protected', audit:'Behaviour' },
+    audited:{ label:'Representation audit', target:'Residual?', retain:'Measured', audit:'Internal' },
+    durable:{ label:'Deployment stress', target:'Recovery?', retain:'Re-check', audit:'Post-deploy' }
+  };
+
+  function setMachineState(state) {
+    if (!machine || !states[state]) return;
+    machine.dataset.state = state;
+    if (stateLabel) stateLabel.textContent = states[state].label;
+    if (targetSignal) targetSignal.textContent = states[state].target;
+    if (retainSignal) retainSignal.textContent = states[state].retain;
+    if (auditSignal) auditSignal.textContent = states[state].audit;
+    steps.forEach(step => step.classList.toggle('is-active', step.dataset.memoryState === state));
+    tabs.forEach(tab => tab.classList.toggle('is-active', tab.dataset.stateTarget === state));
+    if (gsap && !reducedMotion) {
+      gsap.fromTo([stateLabel,targetSignal,retainSignal,auditSignal].filter(Boolean), { y:8, opacity:.3 }, { y:0, opacity:1, duration:.45, stagger:.035, ease:'power3.out', overwrite:true });
+    }
+  }
+
+  if (!reducedMotion && ScrollTrigger) {
+    steps.forEach(step => {
+      ScrollTrigger.create({
+        trigger:step,
+        start:'top 55%',
+        end:'bottom 45%',
+        onEnter:() => setMachineState(step.dataset.memoryState),
+        onEnterBack:() => setMachineState(step.dataset.memoryState)
+      });
+    });
+  } else if ('IntersectionObserver' in window) {
+    const researchObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) setMachineState(entry.target.dataset.memoryState); });
+    }, { threshold:.6 });
+    steps.forEach(step => researchObserver.observe(step));
+  }
+
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    const state = tab.dataset.stateTarget;
+    const step = steps.find(item => item.dataset.memoryState === state);
+    setMachineState(state);
+    if (step) scrollToElement(step, -window.innerHeight * .22);
+  }));
+
+  $$('.publication-row').forEach(row => {
+    row.addEventListener('pointermove', e => {
+      const rect = row.getBoundingClientRect();
+      row.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      row.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    }, { passive:true });
+  });
+
+  if (finePointer && !reducedMotion) {
+    $$('[data-tilt]').forEach(item => {
+      const visual = item.matches('.project-case') ? $('.project-visual', item) : $('.portrait-frame', item);
+      if (!visual) return;
+      item.addEventListener('pointermove', e => {
+        const r = visual.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - .5;
+        const py = (e.clientY - r.top) / r.height - .5;
+        const rx = py * -4.5;
+        const ry = px * 5.5;
+        if (gsap) gsap.to(visual, { rotateX:rx, rotateY:ry, x:px*8, y:py*8, duration:.55, ease:'power3.out', transformPerspective:1200, overwrite:true });
+        else visual.style.transform = `perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      item.addEventListener('pointerleave', () => {
+        if (gsap) gsap.to(visual, { rotateX:0, rotateY:0, x:0, y:0, duration:.8, ease:'elastic.out(1,.55)' });
+        else visual.style.transform = '';
+      });
+    });
+  }
+
+  let resizeTimer = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => ScrollTrigger?.refresh(), 180);
+  }, { passive:true });
+  window.addEventListener('load', () => ScrollTrigger?.refresh(), { once:true });
 })();
-
-// Load the Beautiful UI inspired research/product layer last so it can enhance
-// the existing portfolio without changing the underlying content structure.
-const beautifulUiScript = document.createElement('script');
-beautifulUiScript.src = 'beautiful-ui.js';
-beautifulUiScript.defer = true;
-document.body.appendChild(beautifulUiScript);
