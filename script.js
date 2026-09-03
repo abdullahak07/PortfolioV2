@@ -3,16 +3,24 @@
 
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer = window.matchMedia('(pointer:fine)').matches;
+  const wideScreen = window.innerWidth >= 1100;
+  const desktopMotion = !reducedMotion && finePointer && wideScreen;
   const gsap = window.gsap;
   const ScrollTrigger = window.ScrollTrigger;
-  const Lenis = window.Lenis;
+
+  // Load small performance-only overrides without adding another visual system.
+  const perfLink = document.createElement('link');
+  perfLink.rel = 'stylesheet';
+  perfLink.href = 'performance.css';
+  document.head.appendChild(perfLink);
 
   const year = $('#year');
   if (year) year.textContent = new Date().getFullYear();
 
-  // Build the voice waveform in JS so the markup stays maintainable.
+  // Build the voice waveform once; there is no continuous JS animation attached to it.
   const waveBars = $('.wave-bars');
   if (waveBars) {
     const heights = [18,28,46,68,42,78,54,34,62,88,52,29,74,96,61,41,82,56,32,67,91,48,27,58];
@@ -43,53 +51,30 @@
       return;
     }
 
-    gsap.set(heroLines, { yPercent: 118, rotate: 1.2 });
-    gsap.set(heroRevealGroups, { y: 22, opacity: 0 });
+    gsap.set(heroLines, { yPercent: 108 });
+    gsap.set(heroRevealGroups, { y: 18, opacity: 0 });
     gsap.set(preloadBar, { width: '0%' });
 
-    gsap.timeline({ defaults: { ease: 'power4.out' } })
-      .to(preloadBar, { width: '100%', duration: .55, ease: 'power2.inOut' })
-      .to(preloaderInner, { y: -24, opacity: 0, duration: .45 }, '+=.08')
-      .to(preloader, { yPercent: -100, duration: .85, ease: 'power4.inOut' }, '-=.12')
+    gsap.timeline({ defaults: { ease: 'power3.out' } })
+      .to(preloadBar, { width: '100%', duration: .32, ease: 'power2.inOut' })
+      .to(preloaderInner, { y: -14, opacity: 0, duration: .28 }, '+=.03')
+      .to(preloader, { yPercent: -100, duration: .52, ease: 'power3.inOut' }, '-=.08')
       .add(() => {
         body.classList.remove('is-loading');
         body.classList.add('is-ready');
-      }, '-=.45')
-      .to(heroLines, { yPercent: 0, rotate: 0, duration: 1.05, stagger: .09 }, '-=.48')
-      .to(heroRevealGroups, { y: 0, opacity: 1, duration: .72, stagger: .08 }, '-=.72');
+      }, '-=.28')
+      .to(heroLines, { yPercent: 0, duration: .72, stagger: .06 }, '-=.30')
+      .to(heroRevealGroups, { y: 0, opacity: 1, duration: .48, stagger: .05 }, '-=.48');
   }
 
-  window.addEventListener('load', () => window.setTimeout(revealPage, 180), { once: true });
-  window.setTimeout(revealPage, 1700);
+  window.addEventListener('load', () => window.setTimeout(revealPage, 60), { once: true });
+  window.setTimeout(revealPage, 1100);
 
-  let lenis = null;
-  if (!reducedMotion && Lenis) {
-    lenis = new Lenis({
-      duration: 1.05,
-      smoothWheel: true,
-      touchMultiplier: 1.2,
-      wheelMultiplier: .9,
-      syncTouch: false,
-      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-    });
-
-    if (gsap && ScrollTrigger) {
-      gsap.registerPlugin(ScrollTrigger);
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add(time => lenis.raf(time * 1000));
-      gsap.ticker.lagSmoothing(0);
-    } else {
-      const raf = time => { lenis.raf(time); requestAnimationFrame(raf); };
-      requestAnimationFrame(raf);
-    }
-  } else if (gsap && ScrollTrigger) {
-    gsap.registerPlugin(ScrollTrigger);
-  }
-
+  // Native scrolling is the performance baseline. No permanent Lenis/GSAP ticker.
   function scrollToElement(target, offset = 0) {
     if (!target) return;
-    if (lenis) lenis.scrollTo(target, { offset, duration: 1.15 });
-    else target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    const top = target.getBoundingClientRect().top + window.scrollY + offset;
+    window.scrollTo({ top, behavior: reducedMotion ? 'auto' : 'smooth' });
   }
 
   $$('a[href^="#"]').forEach(link => {
@@ -99,7 +84,7 @@
       const target = $(id);
       if (!target) return;
       event.preventDefault();
-      scrollToElement(target, id === '#top' ? 0 : -40);
+      scrollToElement(target, id === '#top' ? 0 : -28);
     });
   });
 
@@ -112,98 +97,70 @@
     menuToggle.setAttribute('aria-expanded', 'false');
   }
   menuToggle?.addEventListener('click', () => {
-    const open = !mobileNav.classList.contains('is-open');
-    mobileNav.classList.toggle('is-open', open);
-    mobileNav.setAttribute('aria-hidden', String(!open));
+    const open = !mobileNav?.classList.contains('is-open');
+    mobileNav?.classList.toggle('is-open', open);
+    mobileNav?.setAttribute('aria-hidden', String(!open));
     menuToggle.setAttribute('aria-expanded', String(open));
   });
   $$('.mobile-nav a').forEach(a => a.addEventListener('click', closeMobileNav));
 
+  // One rAF-throttled header update, only while scroll events arrive.
   const header = $('[data-header]');
   let previousY = window.scrollY;
   let headerTicking = false;
   function updateHeader() {
     const y = window.scrollY;
-    const movingDown = y > previousY;
-    header?.classList.toggle('is-hidden', movingDown && y > 260 && !mobileNav?.classList.contains('is-open'));
-    previousY = y;
+    const movingDown = y > previousY + 2;
+    const movingUp = y < previousY - 2;
+    if (movingDown || movingUp) {
+      header?.classList.toggle('is-hidden', movingDown && y > 280 && !mobileNav?.classList.contains('is-open'));
+      previousY = y;
+    }
     headerTicking = false;
   }
   window.addEventListener('scroll', () => {
-    if (!headerTicking) {
-      requestAnimationFrame(updateHeader);
-      headerTicking = true;
-    }
+    if (headerTicking) return;
+    headerTicking = true;
+    requestAnimationFrame(updateHeader);
   }, { passive: true });
 
-  const cursorDot = $('.cursor-dot');
-  const cursorRing = $('.cursor-ring');
-  if (finePointer && !reducedMotion && cursorDot && cursorRing) {
-    body.classList.add('has-pointer');
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let ringX = mouseX;
-    let ringY = mouseY;
-
-    window.addEventListener('pointermove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      cursorDot.style.transform = `translate(${mouseX - 2.5}px, ${mouseY - 2.5}px)`;
-    }, { passive: true });
-
-    const cursorFrame = () => {
-      ringX += (mouseX - ringX) * .16;
-      ringY += (mouseY - ringY) * .16;
-      cursorRing.style.transform = `translate(${ringX - 17}px, ${ringY - 17}px)`;
-      requestAnimationFrame(cursorFrame);
-    };
-    requestAnimationFrame(cursorFrame);
-
-    $$('a, button, [data-tilt]').forEach(el => {
-      el.addEventListener('pointerenter', () => body.classList.add('cursor-active'));
-      el.addEventListener('pointerleave', () => body.classList.remove('cursor-active'));
-    });
-
-    $$('.magnetic').forEach(el => {
-      el.addEventListener('pointermove', e => {
-        const r = el.getBoundingClientRect();
-        const x = (e.clientX - r.left - r.width / 2) * .16;
-        const y = (e.clientY - r.top - r.height / 2) * .16;
-        if (gsap) gsap.to(el, { x, y, duration: .35, ease: 'power3.out', overwrite: true });
-        else el.style.transform = `translate(${x}px,${y}px)`;
-      });
-      el.addEventListener('pointerleave', () => {
-        if (gsap) gsap.to(el, { x: 0, y: 0, duration: .65, ease: 'elastic.out(1,.5)' });
-        else el.style.transform = '';
-      });
-    });
-  }
-
-  class AmbientField {
+  // Lightweight ambient field: desktop only, capped at 30 fps, 30 nodes, limited neighbours.
+  class AmbientFieldLite {
     constructor(canvas) {
       this.canvas = canvas;
-      this.ctx = canvas.getContext('2d', { alpha: true });
-      this.dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+      this.ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+      this.dpr = Math.min(window.devicePixelRatio || 1, 1.15);
       this.w = 0;
       this.h = 0;
       this.nodes = [];
-      this.pointer = { x: -9999, y: -9999, active: false };
       this.targetColor = [201,255,102];
       this.color = [201,255,102];
-      this.frame = 0;
-      this.resize = this.resize.bind(this);
+      this.lastFrame = 0;
+      this.running = true;
+      this.frameInterval = 1000 / 30;
+      this.resizeTimer = 0;
       this.draw = this.draw.bind(this);
-      window.addEventListener('resize', this.resize, { passive: true });
-      window.addEventListener('pointermove', e => {
-        this.pointer.x = e.clientX;
-        this.pointer.y = e.clientY;
-        this.pointer.active = true;
-      }, { passive: true });
-      window.addEventListener('pointerleave', () => { this.pointer.active = false; }, { passive: true });
+      this.onResize = this.onResize.bind(this);
+
+      window.addEventListener('resize', this.onResize, { passive:true });
+      document.addEventListener('visibilitychange', () => {
+        this.running = !document.hidden;
+        if (this.running) requestAnimationFrame(this.draw);
+      });
+
       this.resize();
       this.seed();
-      this.draw();
+      requestAnimationFrame(this.draw);
     }
+
+    onResize() {
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = window.setTimeout(() => {
+        this.resize();
+        this.seed();
+      }, 180);
+    }
+
     resize() {
       this.w = window.innerWidth;
       this.h = window.innerHeight;
@@ -213,17 +170,19 @@
       this.canvas.style.height = `${this.h}px`;
       this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     }
+
     seed() {
-      const count = this.w < 800 ? 24 : Math.min(72, Math.floor(this.w / 24));
+      const count = Math.min(30, Math.max(22, Math.floor(this.w / 55)));
       this.nodes = Array.from({ length: count }, (_, i) => ({
         x: Math.random() * this.w,
         y: Math.random() * this.h,
-        vx: (Math.random() - .5) * .14,
-        vy: (Math.random() - .5) * .14,
-        r: i % 11 === 0 ? 1.5 : .75,
-        depth: .35 + Math.random() * .9
+        vx: (Math.random() - .5) * .09,
+        vy: (Math.random() - .5) * .09,
+        r: i % 9 === 0 ? 1.35 : .72,
+        depth: .45 + Math.random() * .55
       }));
     }
+
     setScene(scene) {
       const colors = {
         hero:[201,255,102], research:[201,255,102], publications:[88,112,34],
@@ -231,65 +190,60 @@
       };
       this.targetColor = colors[scene] || colors.hero;
     }
-    draw() {
+
+    draw(time) {
+      if (!this.running) return;
+      requestAnimationFrame(this.draw);
+      if (time - this.lastFrame < this.frameInterval) return;
+      this.lastFrame = time;
+
       const ctx = this.ctx;
       ctx.clearRect(0, 0, this.w, this.h);
-      for (let c = 0; c < 3; c++) this.color[c] += (this.targetColor[c] - this.color[c]) * .025;
+      for (let c = 0; c < 3; c++) this.color[c] += (this.targetColor[c] - this.color[c]) * .06;
       const [r,g,b] = this.color.map(Math.round);
-      const threshold = this.w < 800 ? 105 : 145;
+      const threshold = 135;
+      const threshold2 = threshold * threshold;
 
-      this.nodes.forEach((n, index) => {
+      for (let i = 0; i < this.nodes.length; i++) {
+        const n = this.nodes[i];
         n.x += n.vx * n.depth;
-        n.y += n.vy * n.depth + Math.sin((this.frame + index * 13) * .003) * .015;
-        if (n.x < -30) n.x = this.w + 30;
-        if (n.x > this.w + 30) n.x = -30;
-        if (n.y < -30) n.y = this.h + 30;
-        if (n.y > this.h + 30) n.y = -30;
-
-        if (this.pointer.active && finePointer) {
-          const dx = n.x - this.pointer.x;
-          const dy = n.y - this.pointer.y;
-          const d2 = dx*dx + dy*dy;
-          if (d2 < 17000 && d2 > 1) {
-            const push = (17000 - d2) / 17000 * .22;
-            const d = Math.sqrt(d2);
-            n.x += dx / d * push * 4;
-            n.y += dy / d * push * 4;
-          }
-        }
+        n.y += n.vy * n.depth;
+        if (n.x < -20) n.x = this.w + 20;
+        if (n.x > this.w + 20) n.x = -20;
+        if (n.y < -20) n.y = this.h + 20;
+        if (n.y > this.h + 20) n.y = -20;
 
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r * n.depth, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r},${g},${b},${.12 * n.depth})`;
+        ctx.fillStyle = `rgba(${r},${g},${b},${.10 * n.depth})`;
         ctx.fill();
-      });
 
-      for (let i = 0; i < this.nodes.length; i++) {
-        for (let j = i + 1; j < this.nodes.length; j++) {
-          const a = this.nodes[i];
-          const bNode = this.nodes[j];
-          const dx = a.x - bNode.x;
-          const dy = a.y - bNode.y;
-          const d = Math.sqrt(dx*dx + dy*dy);
-          if (d < threshold) {
-            ctx.beginPath();
-            ctx.moveTo(a.x,a.y);
-            ctx.lineTo(bNode.x,bNode.y);
-            ctx.strokeStyle = `rgba(${r},${g},${b},${(1-d/threshold)*.055})`;
-            ctx.lineWidth = .55;
-            ctx.stroke();
-          }
+        // Only compare with the next few nodes instead of every node on the canvas.
+        const maxJ = Math.min(this.nodes.length, i + 6);
+        for (let j = i + 1; j < maxJ; j++) {
+          const other = this.nodes[j];
+          const dx = n.x - other.x;
+          const dy = n.y - other.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 >= threshold2) continue;
+          ctx.beginPath();
+          ctx.moveTo(n.x, n.y);
+          ctx.lineTo(other.x, other.y);
+          ctx.strokeStyle = `rgba(${r},${g},${b},${(1 - d2 / threshold2) * .045})`;
+          ctx.lineWidth = .5;
+          ctx.stroke();
         }
       }
-      this.frame++;
-      requestAnimationFrame(this.draw);
     }
   }
 
-  const field = !reducedMotion && $('#ambientField') ? new AmbientField($('#ambientField')) : null;
+  const deviceMemory = Number(navigator.deviceMemory || 8);
+  const canRunAmbient = desktopMotion && deviceMemory > 4 && $('#ambientField');
+  const field = canRunAmbient ? new AmbientFieldLite($('#ambientField')) : null;
+  if (!field) $('#ambientField')?.setAttribute('hidden', '');
+
   const scenes = $$('.scene[data-scene]');
   const navLinks = $$('.nav a[href^="#"]');
-
   if ('IntersectionObserver' in window) {
     const sceneObserver = new IntersectionObserver(entries => {
       const visible = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
@@ -298,47 +252,59 @@
       field?.setScene(scene);
       const id = visible.target.id;
       navLinks.forEach(link => link.classList.toggle('is-active', Boolean(id) && link.getAttribute('href') === `#${id}`));
-    }, { threshold:[.12,.3,.5,.7] });
+    }, { threshold:[.18,.42,.66] });
     scenes.forEach(scene => sceneObserver.observe(scene));
   }
 
-  if (!reducedMotion && gsap && ScrollTrigger) {
-    gsap.to('.hero-line:nth-child(1) > span', { xPercent:-7, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
-    gsap.to('.hero-line:nth-child(2) > span', { xPercent:5, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
-    gsap.to('.hero-line:nth-child(3) > span', { xPercent:-4, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
-    gsap.to('.portrait-frame img', { yPercent:8, scale:1.04, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1.2 } });
-    gsap.to('.portrait-scan', { y:'360%', ease:'none', scrollTrigger:{ trigger:'.hero-portrait', start:'top 75%', end:'bottom 20%', scrub:1 } });
+  if (gsap && ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ limitCallbacks:true, ignoreMobileResize:true });
 
+    // Expensive scroll-scrub effects are desktop-only.
+    if (desktopMotion) {
+      gsap.to('.hero-line:nth-child(1) > span', { xPercent:-4.5, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:.45 } });
+      gsap.to('.hero-line:nth-child(2) > span', { xPercent:3.5, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:.45 } });
+      gsap.to('.portrait-frame img', { yPercent:5, scale:1.025, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:.5 } });
+    }
+
+    // Entry animations run once and then release their transform layers.
     $$('.section-intro').forEach(intro => {
-      const parts = $$('.section-kicker,.section-title,.section-copy', intro);
-      gsap.from(parts, { y:58, opacity:0, duration:1, stagger:.08, ease:'power4.out', scrollTrigger:{ trigger:intro, start:'top 78%', once:true } });
+      gsap.from(intro, {
+        y: reducedMotion ? 0 : 36,
+        opacity:0,
+        duration:.72,
+        ease:'power3.out',
+        clearProps:'transform,opacity',
+        scrollTrigger:{ trigger:intro, start:'top 82%', once:true }
+      });
     });
 
-    $$('.publication-row').forEach((row, index) => {
-      gsap.from(row.children, { y:40, opacity:0, duration:.8, stagger:.055, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 84%', once:true } });
-      const graphic = $('.pub-motion', row);
-      if (graphic) gsap.from(graphic, { x:index % 2 ? -28 : 28, duration:1, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 84%', once:true } });
+    $$('.publication-row').forEach(row => {
+      gsap.from(row, {
+        y: reducedMotion ? 0 : 28,
+        opacity:0,
+        duration:.62,
+        ease:'power3.out',
+        clearProps:'transform,opacity',
+        scrollTrigger:{ trigger:row, start:'top 88%', once:true }
+      });
     });
 
-    $$('.teaching-roles article').forEach((card, i) => {
-      gsap.from(card, { y:50, opacity:0, duration:.9, delay:i*.07, ease:'power3.out', scrollTrigger:{ trigger:card, start:'top 82%', once:true } });
+    $$('.project-case').forEach(project => {
+      gsap.from(project, {
+        y: reducedMotion ? 0 : 38,
+        opacity:0,
+        duration:.76,
+        ease:'power3.out',
+        clearProps:'transform,opacity',
+        scrollTrigger:{ trigger:project, start:'top 82%', once:true }
+      });
     });
 
-    $$('.project-case').forEach((project, i) => {
-      const copy = $('.project-copy', project);
-      const visual = $('.project-visual', project);
-      gsap.from(copy, { y:65, opacity:0, duration:1, ease:'power4.out', scrollTrigger:{ trigger:project, start:'top 76%', once:true } });
-      gsap.from(visual, { clipPath:i%2 ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)', duration:1.15, ease:'power4.inOut', scrollTrigger:{ trigger:project, start:'top 79%', once:true } });
-    });
-
-    gsap.from('.about-lead', { y:60, opacity:0, duration:1, ease:'power4.out', scrollTrigger:{ trigger:'.about-grid', start:'top 78%', once:true } });
-    gsap.from('.about-copy > *', { y:45, opacity:0, duration:.85, stagger:.1, ease:'power3.out', scrollTrigger:{ trigger:'.about-grid', start:'top 75%', once:true } });
-    $$('.timeline article').forEach(row => gsap.from(row, { x:-26, opacity:0, duration:.7, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 88%', once:true } }));
-    gsap.from('.closing h2 span', { yPercent:110, opacity:0, duration:1.05, stagger:.11, ease:'power4.out', scrollTrigger:{ trigger:'.closing', start:'top 62%', once:true } });
-
+    // Pinned horizontal storytelling stays on large desktops only.
     const rail = $('[data-horizontal-rail]');
     const track = rail ? $('.rail-track', rail) : null;
-    if (rail && track && window.innerWidth > 800) {
+    if (desktopMotion && rail && track && window.innerWidth >= 1200) {
       const horizontalDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + Math.max(40, window.innerWidth * .08));
       gsap.to(track, {
         x:() => -horizontalDistance(),
@@ -346,10 +312,11 @@
         scrollTrigger:{
           trigger:rail,
           start:'top top',
-          end:() => `+=${horizontalDistance() + window.innerHeight * .8}`,
-          scrub:1,
+          end:() => `+=${horizontalDistance() + window.innerHeight * .55}`,
+          scrub:.4,
           pin:true,
-          anticipatePin:1,
+          pinType:'fixed',
+          anticipatePin:0,
           invalidateOnRefresh:true
         }
       });
@@ -379,25 +346,13 @@
     if (auditSignal) auditSignal.textContent = states[state].audit;
     steps.forEach(step => step.classList.toggle('is-active', step.dataset.memoryState === state));
     tabs.forEach(tab => tab.classList.toggle('is-active', tab.dataset.stateTarget === state));
-    if (gsap && !reducedMotion) {
-      gsap.fromTo([stateLabel,targetSignal,retainSignal,auditSignal].filter(Boolean), { y:8, opacity:.3 }, { y:0, opacity:1, duration:.45, stagger:.035, ease:'power3.out', overwrite:true });
-    }
   }
 
-  if (!reducedMotion && ScrollTrigger) {
-    steps.forEach(step => {
-      ScrollTrigger.create({
-        trigger:step,
-        start:'top 55%',
-        end:'bottom 45%',
-        onEnter:() => setMachineState(step.dataset.memoryState),
-        onEnterBack:() => setMachineState(step.dataset.memoryState)
-      });
-    });
-  } else if ('IntersectionObserver' in window) {
+  if ('IntersectionObserver' in window) {
     const researchObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => { if (entry.isIntersecting) setMachineState(entry.target.dataset.memoryState); });
-    }, { threshold:.6 });
+      const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setMachineState(visible.target.dataset.memoryState);
+    }, { rootMargin:'-34% 0px -34% 0px', threshold:.01 });
     steps.forEach(step => researchObserver.observe(step));
   }
 
@@ -405,41 +360,38 @@
     const state = tab.dataset.stateTarget;
     const step = steps.find(item => item.dataset.memoryState === state);
     setMachineState(state);
-    if (step) scrollToElement(step, -window.innerHeight * .22);
+    if (step) scrollToElement(step, -window.innerHeight * .20);
   }));
 
-  $$('.publication-row').forEach(row => {
-    row.addEventListener('pointermove', e => {
-      const rect = row.getBoundingClientRect();
-      row.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-      row.style.setProperty('--my', `${e.clientY - rect.top}px`);
-    }, { passive:true });
-  });
-
-  if (finePointer && !reducedMotion) {
-    $$('[data-tilt]').forEach(item => {
-      const visual = item.matches('.project-case') ? $('.project-visual', item) : $('.portrait-frame', item);
-      if (!visual) return;
-      item.addEventListener('pointermove', e => {
-        const r = visual.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width - .5;
-        const py = (e.clientY - r.top) / r.height - .5;
-        const rx = py * -4.5;
-        const ry = px * 5.5;
-        if (gsap) gsap.to(visual, { rotateX:rx, rotateY:ry, x:px*8, y:py*8, duration:.55, ease:'power3.out', transformPerspective:1200, overwrite:true });
-        else visual.style.transform = `perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-      });
-      item.addEventListener('pointerleave', () => {
-        if (gsap) gsap.to(visual, { rotateX:0, rotateY:0, x:0, y:0, duration:.8, ease:'elastic.out(1,.55)' });
-        else visual.style.transform = '';
-      });
+  // Pointer spotlight only; no GSAP tween creation on every pointer move.
+  if (desktopMotion) {
+    $$('.publication-row').forEach(row => {
+      let raf = 0;
+      let x = 0;
+      let y = 0;
+      row.addEventListener('pointermove', event => {
+        const rect = row.getBoundingClientRect();
+        x = event.clientX - rect.left;
+        y = event.clientY - rect.top;
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          row.style.setProperty('--mx', `${x}px`);
+          row.style.setProperty('--my', `${y}px`);
+          raf = 0;
+        });
+      }, { passive:true });
     });
   }
 
   let resizeTimer = 0;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(() => ScrollTrigger?.refresh(), 180);
+    resizeTimer = window.setTimeout(() => {
+      if (desktopMotion) ScrollTrigger?.refresh();
+    }, 250);
   }, { passive:true });
-  window.addEventListener('load', () => ScrollTrigger?.refresh(), { once:true });
+
+  window.addEventListener('load', () => {
+    if (desktopMotion) window.setTimeout(() => ScrollTrigger?.refresh(), 120);
+  }, { once:true });
 })();

@@ -1,0 +1,56 @@
+/* Performance guardrails for the cinematic portfolio. */
+
+@media (max-width: 1099px), (pointer: coarse) {
+  .ambient-field,
+  .grain,
+  .cursor-dot,
+  .cursor-ring { display: none !important; }
+
+  .site-header,
+  .memory-machine {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .site-header { background: rgba(7,8,7,.97) !important; }
+  .memory-machine { background: #0a0c0a !important; }
+
+  .orbit,
+  .signal,
+  .scroll-cue i::after,
+  .skills-track,
+  .wave-bars i,
+  .health-pulse,
+  .health-ring,
+  .face-orb,
+  .align-cloud i,
+  .forensic-box {
+    animation: none !important;
+  }
+
+  .portrait-frame img,
+  .hero-line > span,
+  .project-visual,
+  .pub-motion {
+    will-change: auto !important;
+  }
+}
+
+.publication-row,
+.project-case,
+.week-card,
+.research-step {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 620px;
+}
+
+.project-visual,
+.pub-motion,
+.machine-stage {
+  contain: layout paint style;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-field,
+  .grain { display: none !important; }
+}
