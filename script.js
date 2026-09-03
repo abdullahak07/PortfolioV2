@@ -9,9 +9,22 @@
   const ScrollTrigger = window.ScrollTrigger;
   const Lenis = window.Lenis;
 
-  $('#year').textContent = new Date().getFullYear();
+  const year = $('#year');
+  if (year) year.textContent = new Date().getFullYear();
 
-  // ---------- PRELOADER + MASTER INTRO ----------
+  // Build the voice waveform in JS so the markup stays maintainable.
+  const waveBars = $('.wave-bars');
+  if (waveBars) {
+    const heights = [18,28,46,68,42,78,54,34,62,88,52,29,74,96,61,41,82,56,32,67,91,48,27,58];
+    waveBars.textContent = '';
+    heights.forEach((height, index) => {
+      const bar = document.createElement('i');
+      bar.style.setProperty('--i', String(index));
+      bar.style.height = `${height}%`;
+      waveBars.appendChild(bar);
+    });
+  }
+
   const body = document.body;
   const preloader = $('.preloader');
   const preloaderInner = $('.preloader-inner');
@@ -34,8 +47,8 @@
     gsap.set(heroRevealGroups, { y: 22, opacity: 0 });
     gsap.set(preloadBar, { width: '0%' });
 
-    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-    tl.to(preloadBar, { width: '100%', duration: .55, ease: 'power2.inOut' })
+    gsap.timeline({ defaults: { ease: 'power4.out' } })
+      .to(preloadBar, { width: '100%', duration: .55, ease: 'power2.inOut' })
       .to(preloaderInner, { y: -24, opacity: 0, duration: .45 }, '+=.08')
       .to(preloader, { yPercent: -100, duration: .85, ease: 'power4.inOut' }, '-=.12')
       .add(() => {
@@ -49,7 +62,6 @@
   window.addEventListener('load', () => window.setTimeout(revealPage, 180), { once: true });
   window.setTimeout(revealPage, 1700);
 
-  // ---------- SMOOTH SCROLL ----------
   let lenis = null;
   if (!reducedMotion && Lenis) {
     lenis = new Lenis({
@@ -91,7 +103,6 @@
     });
   });
 
-  // ---------- MOBILE NAV ----------
   const menuToggle = $('.menu-toggle');
   const mobileNav = $('.mobile-nav');
   function closeMobileNav() {
@@ -108,14 +119,13 @@
   });
   $$('.mobile-nav a').forEach(a => a.addEventListener('click', closeMobileNav));
 
-  // ---------- HEADER BEHAVIOUR ----------
   const header = $('[data-header]');
   let previousY = window.scrollY;
   let headerTicking = false;
   function updateHeader() {
     const y = window.scrollY;
     const movingDown = y > previousY;
-    if (header) header.classList.toggle('is-hidden', movingDown && y > 260 && !mobileNav?.classList.contains('is-open'));
+    header?.classList.toggle('is-hidden', movingDown && y > 260 && !mobileNav?.classList.contains('is-open'));
     previousY = y;
     headerTicking = false;
   }
@@ -126,17 +136,21 @@
     }
   }, { passive: true });
 
-  // ---------- CURSOR + MAGNETIC PHYSICS ----------
   const cursorDot = $('.cursor-dot');
   const cursorRing = $('.cursor-ring');
   if (finePointer && !reducedMotion && cursorDot && cursorRing) {
     body.classList.add('has-pointer');
-    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-    let ringX = mouseX, ringY = mouseY;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let ringX = mouseX;
+    let ringY = mouseY;
+
     window.addEventListener('pointermove', e => {
-      mouseX = e.clientX; mouseY = e.clientY;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
       cursorDot.style.transform = `translate(${mouseX - 2.5}px, ${mouseY - 2.5}px)`;
     }, { passive: true });
+
     const cursorFrame = () => {
       ringX += (mouseX - ringX) * .16;
       ringY += (mouseY - ringY) * .16;
@@ -165,31 +179,34 @@
     });
   }
 
-  // ---------- AMBIENT RESEARCH FIELD ----------
   class AmbientField {
     constructor(canvas) {
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d', { alpha: true });
       this.dpr = Math.min(window.devicePixelRatio || 1, 1.6);
-      this.w = 0; this.h = 0;
+      this.w = 0;
+      this.h = 0;
       this.nodes = [];
       this.pointer = { x: -9999, y: -9999, active: false };
-      this.scroll = 0;
       this.targetColor = [201,255,102];
       this.color = [201,255,102];
       this.frame = 0;
       this.resize = this.resize.bind(this);
       this.draw = this.draw.bind(this);
       window.addEventListener('resize', this.resize, { passive: true });
-      window.addEventListener('pointermove', e => { this.pointer.x = e.clientX; this.pointer.y = e.clientY; this.pointer.active = true; }, { passive: true });
+      window.addEventListener('pointermove', e => {
+        this.pointer.x = e.clientX;
+        this.pointer.y = e.clientY;
+        this.pointer.active = true;
+      }, { passive: true });
       window.addEventListener('pointerleave', () => { this.pointer.active = false; }, { passive: true });
-      window.addEventListener('scroll', () => { this.scroll = window.scrollY; }, { passive: true });
       this.resize();
       this.seed();
       this.draw();
     }
     resize() {
-      this.w = window.innerWidth; this.h = window.innerHeight;
+      this.w = window.innerWidth;
+      this.h = window.innerHeight;
       this.canvas.width = Math.floor(this.w * this.dpr);
       this.canvas.height = Math.floor(this.h * this.dpr);
       this.canvas.style.width = `${this.w}px`;
@@ -224,11 +241,14 @@
       this.nodes.forEach((n, index) => {
         n.x += n.vx * n.depth;
         n.y += n.vy * n.depth + Math.sin((this.frame + index * 13) * .003) * .015;
-        if (n.x < -30) n.x = this.w + 30; if (n.x > this.w + 30) n.x = -30;
-        if (n.y < -30) n.y = this.h + 30; if (n.y > this.h + 30) n.y = -30;
+        if (n.x < -30) n.x = this.w + 30;
+        if (n.x > this.w + 30) n.x = -30;
+        if (n.y < -30) n.y = this.h + 30;
+        if (n.y > this.h + 30) n.y = -30;
 
         if (this.pointer.active && finePointer) {
-          const dx = n.x - this.pointer.x, dy = n.y - this.pointer.y;
+          const dx = n.x - this.pointer.x;
+          const dy = n.y - this.pointer.y;
           const d2 = dx*dx + dy*dy;
           if (d2 < 17000 && d2 > 1) {
             const push = (17000 - d2) / 17000 * .22;
@@ -246,13 +266,18 @@
 
       for (let i = 0; i < this.nodes.length; i++) {
         for (let j = i + 1; j < this.nodes.length; j++) {
-          const a = this.nodes[i], bNode = this.nodes[j];
-          const dx = a.x - bNode.x, dy = a.y - bNode.y;
+          const a = this.nodes[i];
+          const bNode = this.nodes[j];
+          const dx = a.x - bNode.x;
+          const dy = a.y - bNode.y;
           const d = Math.sqrt(dx*dx + dy*dy);
           if (d < threshold) {
-            ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(bNode.x,bNode.y);
+            ctx.beginPath();
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(bNode.x,bNode.y);
             ctx.strokeStyle = `rgba(${r},${g},${b},${(1-d/threshold)*.055})`;
-            ctx.lineWidth = .55; ctx.stroke();
+            ctx.lineWidth = .55;
+            ctx.stroke();
           }
         }
       }
@@ -262,10 +287,9 @@
   }
 
   const field = !reducedMotion && $('#ambientField') ? new AmbientField($('#ambientField')) : null;
-
-  // ---------- SCENE OBSERVER + NAV STATE ----------
   const scenes = $$('.scene[data-scene]');
   const navLinks = $$('.nav a[href^="#"]');
+
   if ('IntersectionObserver' in window) {
     const sceneObserver = new IntersectionObserver(entries => {
       const visible = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
@@ -273,14 +297,12 @@
       const scene = visible.target.dataset.scene;
       field?.setScene(scene);
       const id = visible.target.id;
-      navLinks.forEach(link => link.classList.toggle('is-active', id && link.getAttribute('href') === `#${id}`));
+      navLinks.forEach(link => link.classList.toggle('is-active', Boolean(id) && link.getAttribute('href') === `#${id}`));
     }, { threshold:[.12,.3,.5,.7] });
     scenes.forEach(scene => sceneObserver.observe(scene));
   }
 
-  // ---------- GSAP SCROLL CHOREOGRAPHY ----------
   if (!reducedMotion && gsap && ScrollTrigger) {
-    // Hero behaves like a title sequence, not a set of independent fades.
     gsap.to('.hero-line:nth-child(1) > span', { xPercent:-7, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
     gsap.to('.hero-line:nth-child(2) > span', { xPercent:5, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
     gsap.to('.hero-line:nth-child(3) > span', { xPercent:-4, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
@@ -295,7 +317,7 @@
     $$('.publication-row').forEach((row, index) => {
       gsap.from(row.children, { y:40, opacity:0, duration:.8, stagger:.055, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 84%', once:true } });
       const graphic = $('.pub-motion', row);
-      if (graphic) gsap.from(graphic, { x: index % 2 ? -28 : 28, duration:1, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 84%', once:true } });
+      if (graphic) gsap.from(graphic, { x:index % 2 ? -28 : 28, duration:1, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 84%', once:true } });
     });
 
     $$('.teaching-roles article').forEach((card, i) => {
@@ -303,7 +325,8 @@
     });
 
     $$('.project-case').forEach((project, i) => {
-      const copy = $('.project-copy', project), visual = $('.project-visual', project);
+      const copy = $('.project-copy', project);
+      const visual = $('.project-visual', project);
       gsap.from(copy, { y:65, opacity:0, duration:1, ease:'power4.out', scrollTrigger:{ trigger:project, start:'top 76%', once:true } });
       gsap.from(visual, { clipPath:i%2 ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)', duration:1.15, ease:'power4.inOut', scrollTrigger:{ trigger:project, start:'top 79%', once:true } });
     });
@@ -313,14 +336,12 @@
     $$('.timeline article').forEach(row => gsap.from(row, { x:-26, opacity:0, duration:.7, ease:'power3.out', scrollTrigger:{ trigger:row, start:'top 88%', once:true } }));
     gsap.from('.closing h2 span', { yPercent:110, opacity:0, duration:1.05, stagger:.11, ease:'power4.out', scrollTrigger:{ trigger:'.closing', start:'top 62%', once:true } });
 
-    // Horizontal teaching cinema on large screens.
     const rail = $('[data-horizontal-rail]');
-    const track = $('.rail-track', rail || document);
-    const viewport = $('.rail-viewport', rail || document);
-    if (rail && track && viewport && window.innerWidth > 800) {
+    const track = rail ? $('.rail-track', rail) : null;
+    if (rail && track && window.innerWidth > 800) {
       const horizontalDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + Math.max(40, window.innerWidth * .08));
       gsap.to(track, {
-        x: () => -horizontalDistance(),
+        x:() => -horizontalDistance(),
         ease:'none',
         scrollTrigger:{
           trigger:rail,
@@ -335,7 +356,6 @@
     }
   }
 
-  // ---------- RESEARCH STATE MACHINE ----------
   const machine = $('.memory-machine');
   const stateLabel = $('#machineStateLabel');
   const targetSignal = $('#targetSignal');
@@ -353,14 +373,14 @@
   function setMachineState(state) {
     if (!machine || !states[state]) return;
     machine.dataset.state = state;
-    stateLabel.textContent = states[state].label;
-    targetSignal.textContent = states[state].target;
-    retainSignal.textContent = states[state].retain;
-    auditSignal.textContent = states[state].audit;
+    if (stateLabel) stateLabel.textContent = states[state].label;
+    if (targetSignal) targetSignal.textContent = states[state].target;
+    if (retainSignal) retainSignal.textContent = states[state].retain;
+    if (auditSignal) auditSignal.textContent = states[state].audit;
     steps.forEach(step => step.classList.toggle('is-active', step.dataset.memoryState === state));
     tabs.forEach(tab => tab.classList.toggle('is-active', tab.dataset.stateTarget === state));
     if (gsap && !reducedMotion) {
-      gsap.fromTo([stateLabel,targetSignal,retainSignal,auditSignal], { y:8, opacity:.3 }, { y:0, opacity:1, duration:.45, stagger:.035, ease:'power3.out', overwrite:true });
+      gsap.fromTo([stateLabel,targetSignal,retainSignal,auditSignal].filter(Boolean), { y:8, opacity:.3 }, { y:0, opacity:1, duration:.45, stagger:.035, ease:'power3.out', overwrite:true });
     }
   }
 
@@ -374,7 +394,7 @@
         onEnterBack:() => setMachineState(step.dataset.memoryState)
       });
     });
-  } else {
+  } else if ('IntersectionObserver' in window) {
     const researchObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => { if (entry.isIntersecting) setMachineState(entry.target.dataset.memoryState); });
     }, { threshold:.6 });
@@ -388,7 +408,6 @@
     if (step) scrollToElement(step, -window.innerHeight * .22);
   }));
 
-  // ---------- PUBLICATION LIGHT FIELD ----------
   $$('.publication-row').forEach(row => {
     row.addEventListener('pointermove', e => {
       const rect = row.getBoundingClientRect();
@@ -397,7 +416,6 @@
     }, { passive:true });
   });
 
-  // ---------- PROJECT DEPTH ----------
   if (finePointer && !reducedMotion) {
     $$('[data-tilt]').forEach(item => {
       const visual = item.matches('.project-case') ? $('.project-visual', item) : $('.portrait-frame', item);
@@ -418,12 +436,10 @@
     });
   }
 
-  // ---------- RESIZE / REFRESH ----------
   let resizeTimer = 0;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => ScrollTrigger?.refresh(), 180);
   }, { passive:true });
-
   window.addEventListener('load', () => ScrollTrigger?.refresh(), { once:true });
 })();
