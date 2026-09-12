@@ -1,0 +1,136 @@
+/* Final palette polish + useful hero filler.
+   Cooler bone, deeper graphite, restrained oxblood. */
+
+:root{
+  --paper:#f7f6f2;
+  --paper-2:#efede8;
+  --surface:#fcfbf8;
+  --ink:#161616;
+  --ink-2:#292826;
+  --muted:#65625d;
+  --line:#d9d5ce;
+  --line-strong:#b8b2aa;
+  --wine:#702334;
+  --wine-dark:#501824;
+  --wine-soft:#c68d98;
+  --dark:#171716;
+  --dark-2:#22211f;
+  --light:#faf8f3;
+}
+
+html,body{background:var(--paper)}
+.site-header{background:rgba(247,246,242,.97)}
+.snapshot{background:#fbfaf7}
+.snapshot-item:hover{background:#f4f2ed}
+
+.hero{
+  background:
+    radial-gradient(circle at 84% 16%,rgba(112,35,52,.10),transparent 27%),
+    radial-gradient(circle at 9% 82%,rgba(74,103,120,.08),transparent 27%),
+    linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0)),
+    var(--paper)!important;
+}
+
+.hero-current{
+  display:grid;
+  grid-template-columns:auto repeat(3,minmax(0,1fr));
+  align-items:stretch;
+  margin-top:28px;
+  border-top:1px solid rgba(22,22,22,.42);
+  border-bottom:1px solid var(--line);
+}
+.hero-current-label{
+  margin:0;
+  padding:14px 20px 14px 0;
+  align-self:stretch;
+  display:flex;
+  align-items:flex-start;
+  font-size:8px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--wine);
+}
+.hero-current-item{
+  min-width:0;
+  padding:14px 16px 15px;
+  border-left:1px solid var(--line);
+}
+.hero-current-item span{
+  display:block;
+  margin-bottom:6px;
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+  color:var(--muted);
+}
+.hero-current-item strong{
+  display:block;
+  font-family:var(--serif);
+  font-size:clamp(15px,1.35vw,18px);
+  font-weight:500;
+  line-height:1.18;
+  letter-spacing:-.02em;
+  color:var(--ink);
+}
+.hero-current-item em{
+  display:block;
+  margin-top:4px;
+  font-family:var(--sans);
+  font-size:9px;
+  font-style:normal;
+  line-height:1.4;
+  color:var(--wine);
+}
+
+.hero-actions{margin-top:22px}
+
+/* Make glass read as crisp rather than milky on the cooler canvas. */
+.profile-panel{
+  background:linear-gradient(145deg,rgba(255,255,255,.77),rgba(255,255,255,.34))!important;
+  border-color:rgba(112,35,52,.14)!important;
+  box-shadow:0 24px 64px rgba(31,28,24,.12),inset 0 1px 0 rgba(255,255,255,.94)!important;
+}
+.proof-strip>div,
+.proof-strip>div:not(:first-child){
+  background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(255,255,255,.34))!important;
+  border-color:rgba(255,255,255,.94)!important;
+  box-shadow:0 14px 34px rgba(31,28,24,.075),inset 0 1px 0 rgba(255,255,255,.98)!important;
+}
+.hero-actions .button:not(.button-primary){
+  background:rgba(255,255,255,.60)!important;
+  border-color:rgba(22,22,22,.18)!important;
+}
+
+.hero::before{
+  opacity:.72;
+  background:linear-gradient(145deg,rgba(255,255,255,.50),rgba(255,255,255,.15))!important;
+}
+.hero::after{
+  opacity:.52;
+  background:linear-gradient(145deg,rgba(255,255,255,.42),rgba(255,255,255,.12))!important;
+}
+
+@media(min-width:761px) and (pointer:fine){
+  .site-header{
+    -webkit-backdrop-filter:blur(10px) saturate(1.03);
+    backdrop-filter:blur(10px) saturate(1.03);
+  }
+}
+
+@media(max-width:1040px){
+  .hero-current{grid-template-columns:auto 1fr 1fr}
+  .hero-current-item:last-child{grid-column:2/4;border-top:1px solid var(--line)}
+}
+
+@media(max-width:760px){
+  .hero-current{grid-template-columns:1fr;margin-top:22px}
+  .hero-current-label{padding:12px 0 8px}
+  .hero-current-item{padding:11px 0;border-left:0;border-top:1px solid var(--line)}
+  .hero-current-item:last-child{grid-column:auto}
+  .hero-current-item strong{font-size:16px}
+}
+
+@media(prefers-reduced-transparency:reduce){
+  .profile-panel,.proof-strip>div,.hero-actions .button:not(.button-primary){background:var(--surface)!important}
+}

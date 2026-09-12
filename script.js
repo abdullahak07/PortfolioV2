@@ -3,8 +3,40 @@
 
   const glassStyles = document.createElement('link');
   glassStyles.rel = 'stylesheet';
-  glassStyles.href = 'glass-motion.css?v=3';
+  glassStyles.href = 'glass-motion.css?v=4';
   document.head.appendChild(glassStyles);
+
+  const paletteStyles = document.createElement('link');
+  paletteStyles.rel = 'stylesheet';
+  paletteStyles.href = 'palette-polish.css?v=1';
+  document.head.appendChild(paletteStyles);
+
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f7f6f2');
+
+  const heroActions = document.querySelector('.hero-actions');
+  if (heroActions && !document.querySelector('.hero-current')) {
+    const current = document.createElement('div');
+    current.className = 'hero-current hero-animate';
+    current.setAttribute('aria-label', 'Current professional snapshot');
+    current.innerHTML = `
+      <p class="hero-current-label">Now</p>
+      <div class="hero-current-item">
+        <span>Research</span>
+        <strong>Thesis finalisation</strong>
+        <em>Machine unlearning · multimodal AI</em>
+      </div>
+      <div class="hero-current-item">
+        <span>Accepted</span>
+        <strong>Neurocomputing · 2026</strong>
+        <em>Hessian-Guided Gradient Unlearning</em>
+      </div>
+      <div class="hero-current-item">
+        <span>Teaching</span>
+        <strong>AI + cybersecurity</strong>
+        <em>Murdoch · Notre Dame Australia</em>
+      </div>`;
+    heroActions.before(current);
+  }
 
   const root = document.documentElement;
   const body = document.body;
