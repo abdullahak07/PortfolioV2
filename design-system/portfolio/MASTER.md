@@ -1,61 +1,68 @@
 # Abdullah Ahmad Khan — Portfolio Design System
 
 ## Direction
-Premium research editorial with restrained studio-grade motion. The site should feel authored by an experienced editorial/web designer, not assembled from UI trends or a component marketplace.
+Glance-first premium research portfolio. The homepage must sell the person before it asks the visitor to read the research story. A visitor should understand who Abdullah is, what he does, what proves it, and where to go next within 5–10 seconds.
 
 ## Principles
-- Content hierarchy before decoration.
-- Warm paper as the primary surface, with one deliberate dark editorial stage for contrast and pacing.
-- One wine accent used sparingly for emphasis and interaction.
+- Identity and proof before philosophy.
+- The first viewport must contain name, role, PhD focus, concise value proposition, proof points, portrait and primary actions.
+- Depth comes after the overview; deeper research, projects and teaching remain available below.
+- Warm paper is the primary surface, with one deliberate dark project stage for contrast.
+- One wine accent is used sparingly for status and interaction.
 - No neon AI styling, particles, glassmorphism, scroll hijacking, custom cursors, fake scientific visualisations, or continuous decorative animation.
-- Motion must communicate hierarchy, entry, hover state, or reading progress.
-- Prefer compositor-friendly transform/opacity/clip-path; never animate layout dimensions for decoration.
-- Publications read like an academic index; projects read like case studies; teaching stays secondary.
+- Motion communicates hierarchy, entry, hover state or reading progress only.
+- Prefer transform and opacity; avoid decorative layout animation.
 
 ## Typography
 - Display: Newsreader, serif fallback.
 - Interface/body: DM Sans, system sans fallback.
-- Body minimum: 16px on mobile.
-- Desktop reading measure: roughly 60–75 characters.
-- Display type can be large but should remain editorial rather than billboard-like.
+- Body minimum: 16px desktop baseline; 14–15px secondary copy where appropriate.
+- Hero name max: ~70px desktop, ~58px mobile.
+- Hero proposition max: ~39px desktop, ~33px mobile.
+- Section headings max: ~57px desktop.
+- Project/research titles should feel editorial, not billboard-sized.
 
 ## Colour
-- Paper: #F4F0E7
-- Secondary paper: #ECE6DB
-- Ink: #181714
-- Ink soft: #2B2925
-- Muted: #716B63
-- Rule: #D5CFC4
-- Accent: #7D2332
-- Accent on dark: #C98490
+- Paper: #F5F1E8
+- Secondary paper: #EEE8DC
+- Surface: #FBF9F4
+- Ink: #191815
+- Ink soft: #302E29
+- Muted: #706A61
+- Rule: #D8D1C5
+- Accent: #7C2635
+- Accent dark: #5D1D29
+- Accent on dark: #C99099
+- Dark stage: #1B1A17
 
 ## Layout
-- Max content width: 1420px.
-- Desktop uses asymmetrical editorial grids rather than repeated card grids.
-- Mobile-first reflow; no horizontal scrolling or nested scroll regions.
-- Section rhythm: approximately 94–154px desktop, ~82px mobile.
+- Max content width: 1280px.
+- Desktop hero uses a 2-column identity/profile composition.
+- Opening viewport includes a four-point proof strip.
+- Immediately below hero: three professional routes — Research, Engineering, Teaching.
+- No nested scrolling, pinned sections or horizontal scroll experiences.
 - Square corners by default; no gratuitous card radius.
-- Contrast section order is intentional: paper hero → dark research → paper publications → dark projects → paper teaching → soft-paper about.
+- Section rhythm is compact enough that the homepage feels informative, not theatrical.
 
 ## Motion
 - Native vertical scrolling only.
-- Hero text uses a one-time masked entrance; portrait uses a one-time clip reveal.
-- Section reveals are one-time IntersectionObserver transitions using opacity + <=18px translateY.
-- Hover displacement stays small and purposeful.
-- Header reading-progress line is requestAnimationFrame-throttled.
-- No continuous canvas/WebGL loops, no GSAP/Lenis runtime, no pinned sections.
-- Respect prefers-reduced-motion and render all final states immediately.
+- Hero uses short one-time staggered entrances.
+- Section reveals are one-time IntersectionObserver transitions using opacity + <=14px translateY.
+- Hover displacement stays <=3px.
+- Reading-progress line is requestAnimationFrame-throttled.
+- No GSAP, Lenis, canvas, WebGL or continuous loops.
+- Respect prefers-reduced-motion and render final states immediately.
 
 ## Interaction
 - Visible keyboard focus.
-- Primary interactive targets at least 44px high on touch layouts where practical.
-- Native details/summary for secondary teaching material.
-- Active desktop navigation reflects the currently viewed section.
+- Primary CTAs use 44px minimum touch targets.
+- Native details/summary for the secondary teaching studio.
+- Active desktop navigation reflects the viewed section.
 
 ## Homepage hierarchy
-1. Authored hero / identity / research proposition
-2. Research thesis and four principles on a dark editorial stage
-3. Three thesis/publication anchors + compact additional research index
-4. Three selected project case studies on a dark studio stage
-5. Teaching roles + optional interactive studio disclosure
-6. About / contact / CV / Scholar / GitHub
+1. Name + role + research focus + concise value proposition + proof strip + portrait + CTAs
+2. Three-way professional snapshot: Research / Engineering / Teaching
+3. Three core thesis papers + compact current research index
+4. Three selected project case studies + GitHub archive
+5. Two teaching roles + optional interactive teaching studio
+6. About + contact + CV / Scholar / GitHub / LinkedIn
