@@ -3,42 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#f7f4ed" />
-  <meta name="description" content="Abdullah Ahmad Khan — AI researcher and university lecturer working on machine unlearning, trustworthy AI, multimodal learning and vision-language systems." />
+  <meta name="theme-color" content="#f4f0e7" />
+  <meta name="description" content="Abdullah Ahmad Khan — AI researcher, university lecturer and engineer working on machine unlearning, trustworthy AI, multimodal learning and vision-language systems." />
   <meta name="color-scheme" content="light" />
   <title>Abdullah Ahmad Khan — Machine Unlearning · Trustworthy AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://avatars.githubusercontent.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23171714%22/><text x=%2250%22 y=%2264%22 font-size=%2248%22 text-anchor=%22middle%22 fill=%22%23f7f4ed%22 font-family=%22Arial%22>AK</text></svg>" />
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Person",
-    "name":"Abdullah Ahmad Khan",
-    "url":"https://abdullahhv2.vercel.app/",
-    "jobTitle":["AI Researcher","University Lecturer"],
-    "affiliation":[
-      {"@type":"Organization","name":"Murdoch University"},
-      {"@type":"Organization","name":"University of Notre Dame Australia"}
-    ],
-    "sameAs":[
-      "https://github.com/abdullahak07",
-      "https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en",
-      "https://www.linkedin.com/in/abdullahakhan"
-    ]
-  }
-  </script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23181714%22/><text x=%2250%22 y=%2263%22 font-size=%2244%22 text-anchor=%22middle%22 fill=%22%23f4f0e7%22 font-family=%22Georgia%22>AK</text></svg>" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
 
-  <header class="site-header">
-    <a class="brand" href="#top" aria-label="Abdullah Ahmad Khan — home">
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="Abdullah Ahmad Khan, home">
+      <span class="brand-mark">AK</span>
       <span class="brand-name">Abdullah Ahmad Khan</span>
-      <span class="brand-role">AI research · Perth</span>
     </a>
 
     <nav class="desktop-nav" aria-label="Primary navigation">
@@ -55,7 +38,7 @@
     </div>
   </header>
 
-  <nav id="mobileNav" class="mobile-nav" aria-hidden="true" aria-label="Mobile navigation">
+  <nav id="mobileNav" class="mobile-nav" aria-hidden="true">
     <a href="#research">Research</a>
     <a href="#publications">Publications</a>
     <a href="#projects">Projects</a>
@@ -65,253 +48,255 @@
   </nav>
 
   <main id="main">
-    <section id="top" class="hero shell">
-      <div class="hero-main">
-        <p class="kicker">Machine unlearning · trustworthy AI · multimodal systems</p>
-        <h1>Building AI systems that can <em>forget</em> — and proving when they have not.</h1>
-        <p class="hero-deck">I develop machine-unlearning methods, audits and research software for neural, multimodal and vision-language systems. The work asks a simple question with difficult consequences: when a model appears to forget, what evidence is strong enough to believe it?</p>
-        <div class="hero-actions" aria-label="Primary links">
-          <a class="primary-link" href="#publications">Selected research <span aria-hidden="true">↓</span></a>
-          <a href="https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar ↗</a>
-          <a href="https://github.com/abdullahak07" target="_blank" rel="noopener">GitHub ↗</a>
-        </div>
-      </div>
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-grid shell">
+        <div class="hero-copy">
+          <p class="hero-kicker hero-animate">AI researcher · lecturer · engineer <span>Perth, Australia</span></p>
 
-      <aside class="hero-profile" aria-label="Profile">
-        <figure class="portrait">
-          <div class="portrait-frame">
-            <img src="https://avatars.githubusercontent.com/u/53994342?v=4" width="460" height="575" alt="Abdullah Ahmad Khan" />
+          <h1 id="hero-title" class="hero-title" aria-label="I build AI systems that can forget — and tests that prove whether they did.">
+            <span class="hero-line"><span>I build AI systems</span></span>
+            <span class="hero-line"><span>that can <em>forget</em> —</span></span>
+            <span class="hero-line"><span>and tests that prove</span></span>
+            <span class="hero-line"><span>whether they did.</span></span>
+          </h1>
+
+          <div class="hero-bottom hero-animate">
+            <p class="hero-deck">Machine unlearning, multimodal learning and trustworthy AI. My research asks a simple question with difficult consequences: when a model says it has forgotten, what evidence should we trust?</p>
+            <div class="hero-actions">
+              <a class="text-link strong" href="#publications">Selected research <span>↓</span></a>
+              <a class="text-link" href="https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar <span>↗</span></a>
+              <a class="text-link" href="https://github.com/abdullahak07" target="_blank" rel="noopener">GitHub <span>↗</span></a>
+            </div>
           </div>
-        </figure>
-        <dl class="profile-facts">
-          <div><dt>Research</dt><dd>PhD · Computer Science<br />Murdoch University</dd></div>
-          <div><dt>Teaching</dt><dd>University of Notre Dame Australia<br />Murdoch University</dd></div>
-          <div><dt>Based</dt><dd>Perth, Western Australia</dd></div>
-        </dl>
-      </aside>
+        </div>
+
+        <aside class="hero-aside hero-animate" aria-label="Profile">
+          <figure class="portrait-frame">
+            <div class="portrait-reveal">
+              <img src="https://avatars.githubusercontent.com/u/53994342?v=4" width="520" height="650" alt="Portrait of Abdullah Ahmad Khan" fetchpriority="high" />
+            </div>
+            <figcaption>
+              <span>PhD · Computer Science</span>
+              <span>Thesis finalisation · 2026</span>
+            </figcaption>
+          </figure>
+
+          <div class="hero-index" aria-label="Research areas">
+            <div><span>01</span><p>Machine unlearning</p></div>
+            <div><span>02</span><p>Multimodal AI</p></div>
+            <div><span>03</span><p>Trustworthy systems</p></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="hero-rail shell hero-animate" aria-label="Current research status">
+        <span class="rail-label">Current</span>
+        <p><strong>Hessian-Guided Gradient Unlearning</strong> · accepted in Neurocomputing</p>
+        <a href="#publications">Research index <span>↘</span></a>
+      </div>
     </section>
 
-    <section id="research" class="section shell">
-      <div class="section-rail">
-        <p class="section-number">01</p>
-        <p class="section-label">Research thesis</p>
-      </div>
-      <div class="section-body research-body">
-        <p class="thesis-lead">Forgetting is not a score. It is a claim about behaviour, privacy, internal representation and what survives deployment.</p>
-        <p class="section-intro">My research treats machine unlearning as a systems problem. A useful method must remove targeted information, preserve retained capability, withstand deeper audits and remain forgotten after the model is transformed for real deployment.</p>
+    <section id="research" class="research-stage section-dark" data-section>
+      <div class="shell">
+        <div class="section-intro light" data-reveal>
+          <p class="section-label">01 · Research position</p>
+          <div>
+            <p class="display-statement">Forgetting is not a score. It is a claim that should survive <em>behavioural, privacy, representation and deployment</em> tests.</p>
+          </div>
+        </div>
 
-        <div class="principles" aria-label="Research principles">
+        <div class="research-principles" data-reveal>
           <article>
-            <span>01</span>
-            <h2>Selective forgetting</h2>
-            <p>Remove targeted information without paying the full cost of retraining or destroying useful capability.</p>
+            <span class="principle-no">01</span>
+            <h2>Forget selectively.</h2>
+            <p>Remove targeted information while preserving useful model capability and avoiding full retraining.</p>
           </article>
           <article>
-            <span>02</span>
-            <h2>Representation audit</h2>
-            <p>Look beneath output accuracy for recoverable or identifiable structure that may still encode the forgotten target.</p>
+            <span class="principle-no">02</span>
+            <h2>Audit beneath outputs.</h2>
+            <p>Test whether apparently forgotten information remains recoverable from internal representations.</p>
           </article>
           <article>
-            <span>03</span>
-            <h2>Evaluation reliability</h2>
-            <p>Test disagreement between forgetting, retention, privacy and representation metrics instead of trusting one scalar.</p>
+            <span class="principle-no">03</span>
+            <h2>Distrust single metrics.</h2>
+            <p>Compare forgetting, retention, privacy and representation evidence rather than trusting one scalar.</p>
           </article>
           <article>
-            <span>04</span>
-            <h2>Deployment durability</h2>
-            <p>Stress unlearned models after quantisation and other transformations to see whether supposedly forgotten information returns.</p>
+            <span class="principle-no">04</span>
+            <h2>Stress deployment.</h2>
+            <p>Check whether transformations such as low-bit quantisation can make forgotten information reappear.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <section id="publications" class="section shell">
-      <div class="section-rail">
-        <p class="section-number">02</p>
-        <p class="section-label">Selected research</p>
-      </div>
-      <div class="section-body">
-        <div class="section-heading-line">
-          <h2>Research portfolio</h2>
-          <p>The three papers at the centre of my doctoral work, followed by current research directions.</p>
+    <section id="publications" class="section publications-stage" data-section>
+      <div class="shell">
+        <div class="section-intro" data-reveal>
+          <p class="section-label">02 · Selected publications</p>
+          <div>
+            <h2 class="section-title">Three papers form the core of my doctoral work.</h2>
+            <p class="section-note">Method development, boundary-based forgetting and multimodal alignment — followed by a wider programme on evaluation reliability and durability.</p>
+          </div>
         </div>
 
-        <div class="featured-publications">
-          <article class="publication-feature">
-            <div class="publication-index">01</div>
+        <div class="publication-list" data-reveal>
+          <article class="publication feature-publication">
+            <div class="publication-meta"><span>01</span><span>2026</span><span>Accepted · Neurocomputing</span></div>
             <div class="publication-copy">
-              <p class="publication-meta"><span>Accepted</span> Neurocomputing · 2026</p>
+              <p class="publication-type">Part I · Curvature-aware unlearning</p>
               <h3>Hessian-Guided Gradient Unlearning</h3>
               <p>Curvature-aware refinement for efficient selective forgetting without full retraining.</p>
             </div>
-            <a class="row-action" href="https://github.com/abdullahak07/Hessian-Guided-Paper" target="_blank" rel="noopener">Code ↗</a>
+            <a class="publication-action" href="https://github.com/abdullahak07/Hessian-Guided-Paper" target="_blank" rel="noopener"><span>View code</span><b>↗</b></a>
           </article>
 
-          <article class="publication-feature">
-            <div class="publication-index">02</div>
+          <article class="publication">
+            <div class="publication-meta"><span>02</span><span>2026</span><span>Neural Networks</span></div>
             <div class="publication-copy">
-              <p class="publication-meta"><span>Research</span> Multimodal unlearning · 2026</p>
+              <p class="publication-type">Part II · Boundary control</p>
               <h3>Selective Multimodal Unlearning via Boundary-Based Forgetting</h3>
-              <p>Boundary deformation and projected-gradient control for selective multimodal forgetting.</p>
+              <p>Boundary deformation and projected-gradient control for targeted multimodal forgetting.</p>
             </div>
-            <a class="row-action" href="https://github.com/abdullahak07/BoundaryUnl" target="_blank" rel="noopener">Code ↗</a>
+            <a class="publication-action" href="https://github.com/abdullahak07/BoundaryUnl" target="_blank" rel="noopener"><span>View code</span><b>↗</b></a>
           </article>
 
-          <article class="publication-feature">
-            <div class="publication-index">03</div>
+          <article class="publication">
+            <div class="publication-meta"><span>03</span><span>2026</span><span>Knowledge-Based Systems</span></div>
             <div class="publication-copy">
-              <p class="publication-meta"><span>Under review</span> Knowledge-Based Systems · 2026</p>
+              <p class="publication-type">Part III · Multimodal alignment</p>
               <h3>MU-ALIGN</h3>
-              <p>Tail-suppressed multimodal machine unlearning for vision-language models.</p>
+              <p>Tail-suppressed multimodal machine unlearning designed for vision-language systems.</p>
             </div>
-            <a class="row-action" href="https://github.com/abdullahak07/MU-Align" target="_blank" rel="noopener">Code ↗</a>
+            <a class="publication-action" href="https://github.com/abdullahak07/MU-Align" target="_blank" rel="noopener"><span>View code</span><b>↗</b></a>
           </article>
         </div>
 
-        <div class="index-block">
-          <div class="index-heading">Additional research</div>
-          <div class="compact-index">
-            <a href="https://arxiv.org/abs/2605.02196" target="_blank" rel="noopener"><span>2026 · Preprint</span><strong>DurableUn: Quantization-Induced Recovery Attacks in Machine Unlearning</strong><b>Paper ↗</b></a>
-            <a href="https://arxiv.org/abs/2605.02206" target="_blank" rel="noopener"><span>2026 · Preprint</span><strong>Metric Unreliability in Multimodal Machine Unlearning</strong><b>Paper ↗</b></a>
-            <div><span>2026 · Current research</span><strong>Beyond Output-Level Forgetting: A Two-Dimensional Audit</strong><b>In progress</b></div>
+        <div class="research-index" data-reveal>
+          <p class="index-heading">Current research index</p>
+          <a href="https://arxiv.org/abs/2605.02196" target="_blank" rel="noopener"><span>DurableUn</span><small>Quantization-induced recovery attacks</small><b>↗</b></a>
+          <a href="https://arxiv.org/abs/2605.02206" target="_blank" rel="noopener"><span>Metric Unreliability</span><small>Evaluation disagreement in multimodal unlearning</small><b>↗</b></a>
+          <div><span>Two-Dimensional Audit</span><small>Behaviour + representation recovery</small><b>In progress</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="projects-stage section-dark" data-section>
+      <div class="shell">
+        <div class="section-intro light" data-reveal>
+          <p class="section-label">03 · Selected systems</p>
+          <div>
+            <h2 class="section-title">Research ideas become more convincing when they survive implementation.</h2>
+            <p class="section-note">Three selected systems showing how I work across representation analysis, forensic VLMs and closed-loop ML.</p>
           </div>
         </div>
 
-        <div class="quiet-links">
-          <span>Earlier work</span>
-          <a href="https://link.springer.com/chapter/10.1007/978-981-19-8136-4_10" target="_blank" rel="noopener">Face Mask Detection · Springer 2023 ↗</a>
-          <a href="https://ieeexplore.ieee.org/document/9923957/" target="_blank" rel="noopener">Islamophobic Tweet Detection · IEEE 2022 ↗</a>
-        </div>
-      </div>
-    </section>
-
-    <section id="projects" class="section shell">
-      <div class="section-rail">
-        <p class="section-number">03</p>
-        <p class="section-label">Selected systems</p>
-      </div>
-      <div class="section-body">
-        <div class="section-heading-line">
-          <h2>Built work</h2>
-          <p>Research software and applied systems selected for technical range rather than quantity.</p>
-        </div>
-
         <div class="case-studies">
-          <article class="case-study">
-            <div class="case-number">01</div>
+          <a class="case-study" href="https://face-percept-bench.vercel.app/" target="_blank" rel="noopener" data-reveal>
+            <div class="case-visual" aria-hidden="true">
+              <span class="case-number">01</span>
+              <div class="case-specs"><span>CLIP</span><span>DINOv2</span><span>SigLIP</span></div>
+            </div>
             <div class="case-copy">
-              <p class="case-type">Representation benchmark</p>
+              <p class="case-kicker">Representation analysis · Live system</p>
               <h3>FacePercept-Bench</h3>
-              <p>Real-vs-synthetic face representation analysis across CLIP, DINOv2 and SigLIP, built as an explorable evaluation system rather than a static result table.</p>
-              <a href="https://face-percept-bench.vercel.app/" target="_blank" rel="noopener">Open live system ↗</a>
+              <p>Real-vs-synthetic face representation analysis across three modern vision encoders.</p>
+              <span class="case-link">Open live system <b>↗</b></span>
             </div>
-            <dl class="case-facts">
-              <div><dt>Focus</dt><dd>Representation analysis</dd></div>
-              <div><dt>Models</dt><dd>CLIP · DINOv2 · SigLIP</dd></div>
-              <div><dt>Output</dt><dd>Interactive benchmark</dd></div>
-            </dl>
-          </article>
+          </a>
 
-          <article class="case-study">
-            <div class="case-number">02</div>
+          <a class="case-study" href="https://github.com/abdullahak07/ForensicVLM" target="_blank" rel="noopener" data-reveal>
+            <div class="case-visual" aria-hidden="true">
+              <span class="case-number">02</span>
+              <div class="case-specs"><span>Verdict</span><span>Evidence</span><span>Localisation</span></div>
+            </div>
             <div class="case-copy">
-              <p class="case-type">Multimodal forensics</p>
+              <p class="case-kicker">Multimodal forensics · Research software</p>
               <h3>ForensicVLM-Lite</h3>
-              <p>A compact vision-language forensic pipeline that separates verdict accuracy from evidence localisation, making failure analysis more informative than a single classification score.</p>
-              <a href="https://github.com/abdullahak07/ForensicVLM" target="_blank" rel="noopener">View code ↗</a>
+              <p>A forensic VLM evaluation system separating classification success from evidence localisation quality.</p>
+              <span class="case-link">View repository <b>↗</b></span>
             </div>
-            <dl class="case-facts">
-              <div><dt>Focus</dt><dd>Evidence localisation</dd></div>
-              <div><dt>Modality</dt><dd>Vision + language</dd></div>
-              <div><dt>Output</dt><dd>Research pipeline</dd></div>
-            </dl>
-          </article>
+          </a>
 
-          <article class="case-study">
-            <div class="case-number">03</div>
+          <a class="case-study" href="https://github.com/abdullahak07/NeuroLoop-Lite" target="_blank" rel="noopener" data-reveal>
+            <div class="case-visual" aria-hidden="true">
+              <span class="case-number">03</span>
+              <div class="case-specs"><span>EEG</span><span>Calibration</span><span>Control</span></div>
+            </div>
             <div class="case-copy">
-              <p class="case-type">Closed-loop ML system</p>
+              <p class="case-kicker">Closed-loop ML · Research prototype</p>
               <h3>NeuroLoop-Lite</h3>
-              <p>EEG classification, confidence calibration and simulated closed-loop control designed to expose the decision path between model confidence and downstream action.</p>
-              <a href="https://github.com/abdullahak07/NeuroLoop-Lite" target="_blank" rel="noopener">View code ↗</a>
+              <p>EEG classification, confidence calibration and simulated closed-loop decision control.</p>
+              <span class="case-link">View repository <b>↗</b></span>
             </div>
-            <dl class="case-facts">
-              <div><dt>Signal</dt><dd>EEG</dd></div>
-              <div><dt>Control</dt><dd>Confidence gated</dd></div>
-              <div><dt>Output</dt><dd>Closed-loop simulation</dd></div>
-            </dl>
-          </article>
+          </a>
         </div>
 
-        <div class="quiet-links project-archive">
-          <span>More systems</span>
-          <a href="https://github.com/abdullahak07/tradie-invoice" target="_blank" rel="noopener">Perth Tradie Quote AI ↗</a>
-          <a href="https://health-app-lac-nu.vercel.app/" target="_blank" rel="noopener">Health App ↗</a>
-          <a href="https://github.com/abdullahak07?tab=repositories" target="_blank" rel="noopener">Full GitHub archive ↗</a>
-        </div>
+        <a class="archive-link light-link" href="https://github.com/abdullahak07?tab=repositories" target="_blank" rel="noopener">Browse the full GitHub archive <span>↗</span></a>
       </div>
     </section>
 
-    <section id="teaching" class="section shell">
-      <div class="section-rail">
-        <p class="section-number">04</p>
-        <p class="section-label">Teaching</p>
-      </div>
-      <div class="section-body">
-        <div class="section-heading-line">
-          <h2>Teaching practice</h2>
-          <p>University teaching across AI, cyber threat intelligence, network security and cryptography, supported by interactive material where it adds learning value.</p>
+    <section id="teaching" class="section teaching-stage" data-section>
+      <div class="shell">
+        <div class="section-intro" data-reveal>
+          <p class="section-label">04 · Teaching</p>
+          <div>
+            <h2 class="section-title">Teaching should make technical ideas manipulable, not merely visible.</h2>
+            <p class="section-note">AI, intelligent systems, cyber threat intelligence, network security and cryptography across Murdoch University and the University of Notre Dame Australia.</p>
+          </div>
         </div>
 
-        <div class="teaching-roles">
+        <div class="teaching-roles" data-reveal>
           <article>
-            <p class="role-place">University of Notre Dame Australia</p>
+            <p>University of Notre Dame Australia</p>
             <h3>Academic Lecturer</h3>
-            <p>COMP6012 · Cyber Threat Intelligence<br />COMP6013 · Network Security & Cryptography</p>
-            <span>2026 — Present</span>
+            <span>COMP6012 · Cyber Threat Intelligence</span>
+            <span>COMP6013 · Network Security & Cryptography</span>
+            <small>2026 — Present</small>
           </article>
           <article>
-            <p class="role-place">Murdoch University</p>
+            <p>Murdoch University</p>
             <h3>Casual Academic · IT</h3>
-            <p>ICT619 · Artificial Intelligence<br />ICT206 · Intelligent Systems<br />ICT100 · Transition to IT</p>
-            <span>2024 — Present</span>
+            <span>ICT619 · Artificial Intelligence</span>
+            <span>ICT206 · Intelligent Systems</span>
+            <span>ICT100 · Transition to IT</span>
+            <small>2024 — Present</small>
           </article>
         </div>
 
-        <details class="studio-details">
+        <details class="teaching-studio" data-reveal>
           <summary>
-            <span><strong>Interactive teaching studio</strong><small>12 builds · COMP6012 + COMP6013 · Weeks 01—06</small></span>
+            <span><strong>Interactive teaching studio</strong><small>12 builds · Weeks 01—06</small></span>
             <b aria-hidden="true">+</b>
           </summary>
           <div class="studio-list">
-            <div><span>Week 01 · Foundations</span><p><a href="https://nd-w1.vercel.app/" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w1-c-4ptj-phi.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></p></div>
-            <div><span>Week 02 · Applied security</span><p><a href="https://nd-w2-five.vercel.app/" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w2-c-sand.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></p></div>
-            <div><span>Week 03 · Investigation</span><p><a href="https://nd-w3.vercel.app/" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w3c.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></p></div>
-            <div><span>Week 04 · Cryptography</span><p><a href="https://nd-w4.vercel.app/" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w4c.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></p></div>
-            <div><span>Week 05 · Strategy + keys</span><p><a href="https://github.com/abdullahak07/ND-W5" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://github.com/abdullahak07/ND-W5C" target="_blank" rel="noopener">COMP6013 ↗</a></p></div>
-            <div><span>Week 06 · Platforms + protocols</span><p><a href="https://github.com/abdullahak07/ND-W6" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w6c.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></p></div>
+            <div><span>01</span><p>Foundations</p><nav><a href="https://nd-w1.vercel.app/" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w1-c-4ptj-phi.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></nav></div>
+            <div><span>02</span><p>Applied security</p><nav><a href="https://nd-w2-five.vercel.app/" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w2-c-sand.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></nav></div>
+            <div><span>03</span><p>Hands-on investigation</p><nav><a href="https://nd-w3.vercel.app/" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w3c.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></nav></div>
+            <div><span>04</span><p>Cryptography</p><nav><a href="https://nd-w4.vercel.app/" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w4c.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></nav></div>
+            <div><span>05</span><p>Strategy + keys</p><nav><a href="https://github.com/abdullahak07/ND-W5" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://github.com/abdullahak07/ND-W5C" target="_blank" rel="noopener">COMP6013 ↗</a></nav></div>
+            <div><span>06</span><p>Platforms + protocols</p><nav><a href="https://github.com/abdullahak07/ND-W6" target="_blank" rel="noopener">COMP6012 ↗</a><a href="https://nd-w6c.vercel.app/" target="_blank" rel="noopener">COMP6013 ↗</a></nav></div>
           </div>
         </details>
       </div>
     </section>
 
-    <section id="about" class="section shell about-section">
-      <div class="section-rail">
-        <p class="section-number">05</p>
-        <p class="section-label">About</p>
-      </div>
-      <div class="section-body about-body">
-        <p class="about-lead">I work where research claims meet implementation details.</p>
-        <div class="about-copy">
-          <p>I am a final-stage PhD researcher in Computer Science based in Perth. My research focuses on trustworthy and privacy-preserving AI, especially machine unlearning in neural, multimodal and vision-language systems.</p>
-          <p>Alongside research, I build reproducible experimentation pipelines, applied AI systems and interactive teaching material. I care about whether a method is not only novel, but measurable, reproducible and useful.</p>
-        </div>
-        <div class="contact-links" aria-label="Contact and profiles">
-          <a href="mailto:aahmad607@gmail.com">Email ↗</a>
-          <a href="https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en" target="_blank" rel="noopener">Scholar ↗</a>
-          <a href="https://github.com/abdullahak07" target="_blank" rel="noopener">GitHub ↗</a>
-          <a href="https://www.linkedin.com/in/abdullahakhan" target="_blank" rel="noopener">LinkedIn ↗</a>
-          <a href="cv.html">Curriculum vitae ↗</a>
+    <section id="about" class="about-stage" data-section>
+      <div class="shell about-grid" data-reveal>
+        <p class="section-label">05 · About</p>
+        <div>
+          <p class="about-lead">I work across research, engineering and teaching because each one exposes weaknesses the others can hide.</p>
+          <div class="about-copy">
+            <p>I am a final-stage PhD researcher in Computer Science based in Perth. My research centres on trustworthy and privacy-preserving AI, especially machine unlearning in neural, multimodal and vision-language systems.</p>
+            <p>Alongside research, I build reproducible experimentation pipelines, applied AI systems and interactive teaching material.</p>
+          </div>
+          <div class="contact-links">
+            <a href="mailto:aahmad607@gmail.com">Email <span>↗</span></a>
+            <a href="https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en" target="_blank" rel="noopener">Scholar <span>↗</span></a>
+            <a href="https://github.com/abdullahak07" target="_blank" rel="noopener">GitHub <span>↗</span></a>
+            <a href="https://www.linkedin.com/in/abdullahakhan" target="_blank" rel="noopener">LinkedIn <span>↗</span></a>
+            <a href="cv.html">CV <span>↗</span></a>
+          </div>
         </div>
       </div>
     </section>
