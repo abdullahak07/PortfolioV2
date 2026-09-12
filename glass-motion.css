@@ -22,7 +22,7 @@
   grid-template-columns:minmax(0,1.3fr) minmax(280px,.62fr)!important;
   gap:clamp(36px,5.5vw,78px)!important;
   padding-top:clamp(28px,3.2vw,46px)!important;
-  padding-bottom:clamp(34px,4.2vw,54px)!important;
+  padding-bottom:clamp(22px,2.8vw,34px)!important;
 }
 .hero-copy{padding-top:clamp(6px,1vw,14px)}
 .profile-panel{align-self:start!important}
@@ -59,7 +59,7 @@
 }
 
 .profile-panel{
-  padding:14px;
+  padding:12px;
   border:1px solid rgba(124,38,53,.14);
   border-radius:16px;
   background:
@@ -72,7 +72,28 @@
   animation:profile-float 11.5s ease-in-out infinite;
 }
 .profile-panel .portrait{border-color:rgba(25,24,21,.18);border-radius:10px}
-.profile-panel .profile-facts{margin-bottom:2px}
+.profile-panel .portrait img{
+  aspect-ratio:16/10;
+  object-position:center 28%;
+}
+.profile-panel .profile-facts{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  margin:12px 0 2px;
+  border-top:1px solid rgba(25,24,21,.46);
+}
+.profile-panel .profile-facts div{
+  display:block;
+  min-width:0;
+  padding:9px 10px 10px 0;
+  border-bottom:1px solid var(--line);
+}
+.profile-panel .profile-facts div:nth-child(even){
+  padding-left:12px;
+  border-left:1px solid var(--line);
+}
+.profile-panel .profile-facts dt{margin-bottom:4px}
+.profile-panel .profile-facts dd{font-size:10px;line-height:1.38}
 
 .hero-actions .button:not(.button-primary){
   background:linear-gradient(145deg,rgba(255,255,255,.70),rgba(255,255,255,.30));
@@ -89,15 +110,15 @@
 
 .proof-strip{
   gap:12px;
-  padding-top:12px;
-  padding-bottom:20px;
+  padding-top:8px;
+  padding-bottom:18px;
   border-top:0;
   border-bottom:0;
 }
 .proof-strip>div,
 .proof-strip>div:not(:first-child){
-  min-height:112px;
-  padding:17px 18px 18px;
+  min-height:106px;
+  padding:15px 17px 16px;
   border:1px solid rgba(255,255,255,.82);
   border-radius:14px;
   background:linear-gradient(145deg,rgba(255,255,255,.68),rgba(255,255,255,.27));
@@ -137,19 +158,25 @@
 @media(max-width:1040px){
   .hero-main{
     grid-template-columns:minmax(0,1fr) minmax(240px,300px)!important;
-    gap:38px!important;
+    gap:34px!important;
     padding-top:30px!important;
   }
+  .profile-panel .portrait img{aspect-ratio:4/3}
+  .profile-panel .profile-facts{grid-template-columns:1fr}
+  .profile-panel .profile-facts div:nth-child(even){padding-left:0;border-left:0}
 }
 
 @media(max-width:760px),(pointer:coarse){
   .hero-main{
     grid-template-columns:1fr!important;
     padding-top:26px!important;
-    padding-bottom:34px!important;
+    padding-bottom:28px!important;
   }
   .hero-copy{padding-top:0}
   .hero::before,.hero::after{display:none}
+  .profile-panel .portrait img{aspect-ratio:4/3}
+  .profile-panel .profile-facts{grid-template-columns:1fr 1fr}
+  .profile-panel .profile-facts div:nth-child(even){padding-left:10px;border-left:1px solid var(--line)}
   .profile-panel,
   .proof-strip>div,
   .hero-actions .button:not(.button-primary){
@@ -157,6 +184,11 @@
     backdrop-filter:blur(8px);
   }
   .profile-panel,.proof-strip>div{animation:none;will-change:auto}
+}
+
+@media(max-width:480px){
+  .profile-panel .profile-facts{grid-template-columns:1fr}
+  .profile-panel .profile-facts div:nth-child(even){padding-left:0;border-left:0}
 }
 
 @media(prefers-reduced-motion:reduce){
