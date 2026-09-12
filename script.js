@@ -1,6 +1,11 @@
 (() => {
   'use strict';
 
+  const glassStyles = document.createElement('link');
+  glassStyles.rel = 'stylesheet';
+  glassStyles.href = 'glass-motion.css?v=1';
+  document.head.appendChild(glassStyles);
+
   const root = document.documentElement;
   const body = document.body;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
