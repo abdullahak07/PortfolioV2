@@ -3,7 +3,7 @@
 
   const glassStyles = document.createElement('link');
   glassStyles.rel = 'stylesheet';
-  glassStyles.href = 'glass-motion.css?v=2';
+  glassStyles.href = 'glass-motion.css?v=3';
   document.head.appendChild(glassStyles);
 
   const root = document.documentElement;
