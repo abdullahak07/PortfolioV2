@@ -1,46 +1,96 @@
-/* Selective floating-glass layer for the glance-first homepage.
-   Kept intentionally local to the hero so the portfolio stays editorial. */
+/* Floating-glass hero layer.
+   The homepage stays native-scroll and lightweight; motion is transform-only. */
 
 .hero{
   position:relative;
   isolation:isolate;
+  overflow:hidden;
   background:
-    radial-gradient(circle at 84% 22%,rgba(124,38,53,.11),transparent 24%),
-    radial-gradient(circle at 13% 82%,rgba(89,123,145,.10),transparent 25%),
+    radial-gradient(circle at 82% 18%,rgba(124,38,53,.13),transparent 26%),
+    radial-gradient(circle at 12% 76%,rgba(82,121,146,.12),transparent 25%),
+    linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0)),
     var(--paper);
 }
 
-.hero-main,.proof-strip{position:relative;z-index:1}
+/* The previous hero was vertically centered inside a near-full viewport.
+   That created the large empty area visible above the introduction. */
+.hero-main{
+  position:relative;
+  z-index:2;
+  min-height:0!important;
+  align-items:start!important;
+  grid-template-columns:minmax(0,1.3fr) minmax(280px,.62fr)!important;
+  gap:clamp(36px,5.5vw,78px)!important;
+  padding-top:clamp(28px,3.2vw,46px)!important;
+  padding-bottom:clamp(34px,4.2vw,54px)!important;
+}
+.hero-copy{padding-top:clamp(6px,1vw,14px)}
+.profile-panel{align-self:start!important}
+.proof-strip{position:relative;z-index:2}
 
-.profile-panel{
-  padding:12px;
-  border:1px solid rgba(255,255,255,.58);
-  border-radius:12px;
-  background:rgba(255,255,255,.28);
-  -webkit-backdrop-filter:blur(16px) saturate(1.08);
-  backdrop-filter:blur(16px) saturate(1.08);
-  box-shadow:0 22px 60px rgba(49,39,29,.10),inset 0 1px 0 rgba(255,255,255,.72);
+/* Visible floating panes: decorative, pointer-free and transform-only. */
+.hero::before,
+.hero::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  pointer-events:none;
+  border:1px solid rgba(255,255,255,.72);
+  background:linear-gradient(145deg,rgba(255,255,255,.46),rgba(255,255,255,.13));
+  box-shadow:0 28px 72px rgba(52,42,33,.10),inset 0 1px 0 rgba(255,255,255,.86);
+  border-radius:28px;
+  will-change:transform;
+}
+.hero::before{
+  width:clamp(260px,25vw,390px);
+  height:clamp(150px,15vw,220px);
+  top:72px;
+  right:7%;
+  transform:rotate(7deg);
+  animation:glass-pane-a 13s ease-in-out infinite;
+}
+.hero::after{
+  width:clamp(190px,18vw,280px);
+  height:clamp(110px,11vw,165px);
+  left:3%;
+  bottom:62px;
+  transform:rotate(-8deg);
+  animation:glass-pane-b 15s ease-in-out infinite;
 }
 
-.profile-panel .portrait{border-color:rgba(25,24,21,.22);border-radius:7px}
+.profile-panel{
+  padding:14px;
+  border:1px solid rgba(124,38,53,.14);
+  border-radius:16px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.72),rgba(255,255,255,.28)),
+    rgba(124,38,53,.025);
+  -webkit-backdrop-filter:blur(20px) saturate(1.12);
+  backdrop-filter:blur(20px) saturate(1.12);
+  box-shadow:0 28px 74px rgba(49,39,29,.14),inset 0 1px 0 rgba(255,255,255,.9);
+  transform:translate3d(0,0,0);
+  animation:profile-float 11.5s ease-in-out infinite;
+}
+.profile-panel .portrait{border-color:rgba(25,24,21,.18);border-radius:10px}
 .profile-panel .profile-facts{margin-bottom:2px}
 
 .hero-actions .button:not(.button-primary){
-  background:rgba(255,255,255,.34);
-  border-color:rgba(25,24,21,.22);
-  -webkit-backdrop-filter:blur(10px) saturate(1.08);
-  backdrop-filter:blur(10px) saturate(1.08);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+  background:linear-gradient(145deg,rgba(255,255,255,.70),rgba(255,255,255,.30));
+  border-color:rgba(25,24,21,.20);
+  -webkit-backdrop-filter:blur(12px) saturate(1.1);
+  backdrop-filter:blur(12px) saturate(1.1);
+  box-shadow:0 8px 26px rgba(49,39,29,.06),inset 0 1px 0 rgba(255,255,255,.88);
 }
 .hero-actions .button:not(.button-primary):hover{
-  background:rgba(255,255,255,.56);
-  border-color:rgba(25,24,21,.42);
+  background:rgba(255,255,255,.78);
+  border-color:rgba(124,38,53,.30);
+  box-shadow:0 12px 30px rgba(49,39,29,.10),inset 0 1px 0 rgba(255,255,255,.94);
 }
 
 .proof-strip{
   gap:12px;
   padding-top:12px;
-  padding-bottom:18px;
+  padding-bottom:20px;
   border-top:0;
   border-bottom:0;
 }
@@ -48,42 +98,72 @@
 .proof-strip>div:not(:first-child){
   min-height:112px;
   padding:17px 18px 18px;
-  border:1px solid rgba(255,255,255,.62);
-  border-radius:10px;
-  background:rgba(255,255,255,.31);
-  -webkit-backdrop-filter:blur(14px) saturate(1.08);
-  backdrop-filter:blur(14px) saturate(1.08);
-  box-shadow:0 14px 38px rgba(49,39,29,.075),inset 0 1px 0 rgba(255,255,255,.76);
+  border:1px solid rgba(255,255,255,.82);
+  border-radius:14px;
+  background:linear-gradient(145deg,rgba(255,255,255,.68),rgba(255,255,255,.27));
+  -webkit-backdrop-filter:blur(16px) saturate(1.1);
+  backdrop-filter:blur(16px) saturate(1.1);
+  box-shadow:0 16px 40px rgba(49,39,29,.09),inset 0 1px 0 rgba(255,255,255,.92);
   will-change:transform;
-  animation:glass-float 10s ease-in-out infinite;
+  animation:glass-float 9.5s ease-in-out infinite;
   transition:box-shadow .25s ease,border-color .25s ease,background .25s ease;
 }
-.proof-strip>div:nth-child(2){animation-delay:-2.4s;animation-duration:11.5s}
-.proof-strip>div:nth-child(3){animation-delay:-5.1s;animation-duration:12.5s}
-.proof-strip>div:nth-child(4){animation-delay:-7.8s;animation-duration:10.8s}
+.proof-strip>div:nth-child(2){animation-delay:-2.2s;animation-duration:10.8s}
+.proof-strip>div:nth-child(3){animation-delay:-4.7s;animation-duration:11.7s}
+.proof-strip>div:nth-child(4){animation-delay:-7.1s;animation-duration:10.2s}
 .proof-strip>div:hover{
-  background:rgba(255,255,255,.46);
-  border-color:rgba(124,38,53,.20);
-  box-shadow:0 20px 48px rgba(49,39,29,.11),inset 0 1px 0 rgba(255,255,255,.82);
+  background:rgba(255,255,255,.82);
+  border-color:rgba(124,38,53,.24);
+  box-shadow:0 22px 52px rgba(49,39,29,.13),inset 0 1px 0 rgba(255,255,255,.96);
 }
 
 @keyframes glass-float{
   0%,100%{transform:translate3d(0,0,0)}
-  50%{transform:translate3d(0,-5px,0)}
+  50%{transform:translate3d(0,-6px,0)}
+}
+@keyframes profile-float{
+  0%,100%{transform:translate3d(0,0,0)}
+  50%{transform:translate3d(0,-7px,0)}
+}
+@keyframes glass-pane-a{
+  0%,100%{transform:translate3d(0,0,0) rotate(7deg)}
+  50%{transform:translate3d(-8px,10px,0) rotate(4deg)}
+}
+@keyframes glass-pane-b{
+  0%,100%{transform:translate3d(0,0,0) rotate(-8deg)}
+  50%{transform:translate3d(10px,-8px,0) rotate(-5deg)}
+}
+
+@media(max-width:1040px){
+  .hero-main{
+    grid-template-columns:minmax(0,1fr) minmax(240px,300px)!important;
+    gap:38px!important;
+    padding-top:30px!important;
+  }
 }
 
 @media(max-width:760px),(pointer:coarse){
+  .hero-main{
+    grid-template-columns:1fr!important;
+    padding-top:26px!important;
+    padding-bottom:34px!important;
+  }
+  .hero-copy{padding-top:0}
+  .hero::before,.hero::after{display:none}
   .profile-panel,
   .proof-strip>div,
   .hero-actions .button:not(.button-primary){
     -webkit-backdrop-filter:blur(8px);
     backdrop-filter:blur(8px);
   }
-  .proof-strip>div{animation:none;will-change:auto}
+  .profile-panel,.proof-strip>div{animation:none;will-change:auto}
 }
 
 @media(prefers-reduced-motion:reduce){
-  .proof-strip>div{animation:none!important;will-change:auto}
+  .hero::before,.hero::after,.profile-panel,.proof-strip>div{
+    animation:none!important;
+    will-change:auto;
+  }
 }
 
 @media(prefers-reduced-transparency:reduce){
