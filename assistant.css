@@ -60,26 +60,124 @@
 .ask-actions a{display:inline-flex;align-items:center;gap:6px;color:#355174;font-size:11px;font-weight:800}
 .ask-actions svg{width:15px;height:15px}
 .ask-note{margin:10px 8px 0;color:#8492a6;font-size:9px;line-height:1.4;text-align:center}
-.connect-button.ask-launcher-trigger{min-width:194px}
-.connect-button.ask-launcher-trigger svg,.connect-divider .ask-launcher-trigger svg{width:21px;height:21px;vertical-align:middle}
-.connect-button.ask-launcher-trigger .ask-trigger-icon{display:inline-grid;place-items:center;width:34px;height:34px;margin-right:9px;border-radius:11px;background:#2e7cff}
-.connect-divider .ask-launcher-trigger .ask-trigger-icon{display:inline-grid;place-items:center;width:34px;height:34px;margin-right:9px;border-radius:11px;background:#edf4ff;color:#1765ff}
 body.ask-open{overflow:hidden}
 @media(min-width:800px){body.ask-open{overflow:auto}}
+
+/* Middle Connect: reveal only the two clean actions, inline and properly scaled. */
+.connect-divider{
+  height:auto!important;
+  min-height:74px!important;
+  flex-direction:column!important;
+  overflow:visible!important;
+}
+.connect-quick-panel{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:18px;
+  width:min(760px,calc(100% - 32px));
+  margin:16px auto 22px;
+}
+.connect-quick-panel.open{display:flex}
+.connect-quick-action{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:14px!important;
+  min-width:260px!important;
+  min-height:72px!important;
+  padding:0 24px!important;
+  border:1px solid #d7e1ef!important;
+  border-radius:999px!important;
+  background:#fff!important;
+  color:#0b214a!important;
+  text-decoration:none!important;
+  box-shadow:0 10px 28px rgba(18,41,77,.10)!important;
+  font-size:18px!important;
+  font-weight:800!important;
+  line-height:1!important;
+}
+.connect-quick-action:hover{border-color:#a9c4ef!important;transform:translateY(-1px)}
+.connect-quick-action>span:not(.connect-quick-icon){
+  display:inline!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  font-size:18px!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+}
+.connect-quick-icon{
+  display:grid!important;
+  place-items:center!important;
+  width:46px!important;
+  height:46px!important;
+  flex:0 0 46px!important;
+  margin:0!important;
+  border-radius:50%!important;
+  background:#e9f1ff!important;
+  color:#1765ff!important;
+}
+.connect-quick-icon svg{width:23px!important;height:23px!important}
+
+/* Bottom-right assistant: icon on the left, label on one line. */
+.connect-button.ask-launcher-trigger{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:11px!important;
+  width:auto!important;
+  min-width:194px!important;
+  height:60px!important;
+  padding:0 18px!important;
+  white-space:nowrap!important;
+}
+.connect-button.ask-launcher-trigger>span{
+  width:auto!important;
+  height:auto!important;
+  margin:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+.connect-button.ask-launcher-trigger>.ask-trigger-icon{
+  display:grid!important;
+  place-items:center!important;
+  width:38px!important;
+  height:38px!important;
+  flex:0 0 38px!important;
+  border-radius:12px!important;
+  background:#2e7cff!important;
+  color:#fff!important;
+}
+.connect-button.ask-launcher-trigger .ask-trigger-icon svg{width:21px!important;height:21px!important}
+.connect-button.ask-launcher-trigger>.ask-trigger-label{
+  display:block!important;
+  width:auto!important;
+  color:#fff!important;
+  background:transparent!important;
+  font-size:15px!important;
+  font-weight:800!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+
+/* Higher-resolution, less aggressive crop from Abdullah's supplied original photo. */
+.portrait-circle{
+  background:url('assets/profile-abdullah-hires.jpg') center center/cover no-repeat!important;
+}
+.portrait-circle img{opacity:0!important}
+
 @media(max-width:700px){
   .ask-panel{right:8px;bottom:8px;width:calc(100vw - 16px);height:calc(100dvh - 16px);border-radius:20px}
   .ask-header{min-height:76px}
   .ask-heading strong{font-size:18px}
   .ask-bubble{max-width:94%}
   .ask-actions{gap:14px}
-  .connect-button.ask-launcher-trigger{min-width:166px}
+  .connect-quick-panel{width:calc(100% - 24px);gap:10px}
+  .connect-quick-action{width:min(100%,320px)!important;min-width:0!important}
+  .connect-button.ask-launcher-trigger{right:14px!important;bottom:14px!important;min-width:176px!important;height:56px!important;padding:0 15px!important}
 }
 @media(prefers-reduced-motion:reduce){.ask-panel,.ask-suggestion{transition:none}.ask-status i{animation:none}}
-
-/* Updated hero portrait: local close-up crop from Abdullah's supplied photo. */
-.portrait-circle{
-  background:url('assets/profile-abdullah.jpg') center 42%/cover no-repeat;
-}
-.portrait-circle img{
-  opacity:0!important;
-}
