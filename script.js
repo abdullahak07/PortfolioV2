@@ -11,6 +11,16 @@
   footerIconStyles.href = 'footer-icons.css?v=2';
   document.head.appendChild(footerIconStyles);
 
+  const assistantStyles = document.createElement('link');
+  assistantStyles.rel = 'stylesheet';
+  assistantStyles.href = 'assistant.css?v=1';
+  document.head.appendChild(assistantStyles);
+
+  const assistantScript = document.createElement('script');
+  assistantScript.src = 'assistant.js?v=1';
+  assistantScript.async = true;
+  document.head.appendChild(assistantScript);
+
   const universities = {
     murdoch: {
       name: 'Murdoch University',
