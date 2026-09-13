@@ -1,9 +1,41 @@
 /* Footer/social identity icons */
-.socials{align-items:center}
-.socials a{position:relative;display:grid;place-items:center;width:46px;min-width:46px;height:46px;padding:0;border:1px solid rgba(255,255,255,.25);border-radius:12px;background:rgba(255,255,255,.03);transition:transform .18s ease,background .18s ease,border-color .18s ease}
+.footer-bottom{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:18px!important;
+  text-align:center;
+}
+.socials{
+  display:flex!important;
+  align-items:center;
+  justify-content:center!important;
+  gap:12px;
+  width:100%;
+  margin:0 auto;
+}
+.socials a{
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:46px;
+  min-width:46px;
+  height:46px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:12px;
+  background:rgba(255,255,255,.03);
+  color:#fff;
+  transition:transform .18s ease,background .18s ease,border-color .18s ease;
+}
 .socials a:hover{transform:translateY(-2px);background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.5)}
-.socials .social-icon{display:block;width:23px;height:23px;object-fit:contain}
-.socials .social-icon.cv-icon{width:24px;height:24px}
+.socials a>svg{display:block;width:23px;height:23px;color:#fff}
 .socials .social-label{position:absolute;left:50%;bottom:calc(100% + 9px);transform:translate(-50%,5px);padding:5px 8px;border-radius:7px;background:#fff;color:#0c1c3d;font-size:10px;font-weight:800;white-space:nowrap;opacity:0;pointer-events:none;transition:.16s ease;box-shadow:0 6px 18px rgba(0,0,0,.14)}
 .socials a:hover .social-label,.socials a:focus-visible .social-label{opacity:1;transform:translate(-50%,0)}
-@media(max-width:700px){.socials a{width:44px;min-width:44px;height:44px}.socials .social-label{display:none}}
+@media(max-width:700px){
+  .socials{gap:10px}
+  .socials a{width:44px;min-width:44px;height:44px}
+  .socials a>svg{width:22px;height:22px}
+  .socials .social-label{display:none}
+}

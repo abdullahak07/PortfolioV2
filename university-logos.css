@@ -50,6 +50,7 @@
   .institution em{display:none}
   .institution{padding:5px!important}
   .institution .uni-logo{width:32px;height:32px}
+  .institution-strip .institution:nth-child(n+3){display:none!important}
 }
 
 @media(max-width:760px){

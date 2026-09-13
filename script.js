@@ -3,12 +3,12 @@
 
   const logoStyles = document.createElement('link');
   logoStyles.rel = 'stylesheet';
-  logoStyles.href = 'university-logos.css?v=1';
+  logoStyles.href = 'university-logos.css?v=2';
   document.head.appendChild(logoStyles);
 
   const footerIconStyles = document.createElement('link');
   footerIconStyles.rel = 'stylesheet';
-  footerIconStyles.href = 'footer-icons.css?v=1';
+  footerIconStyles.href = 'footer-icons.css?v=2';
   document.head.appendChild(footerIconStyles);
 
   const universities = {
@@ -23,8 +23,35 @@
     amu: {
       name: 'Aligarh Muslim University',
       src: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://www.amu.ac.in/'
+    },
+    turku: {
+      name: 'University of Turku',
+      src: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://www.utu.fi/'
     }
   };
+
+  const institutionStrip = document.querySelector('.institution-strip');
+  if (institutionStrip && !institutionStrip.textContent.toLowerCase().includes('turku')) {
+    const item = document.createElement('span');
+    item.className = 'institution';
+    item.innerHTML = '<b>UTU</b><em>University of<br>Turku</em>';
+    institutionStrip.appendChild(item);
+  }
+
+  const educationCard = document.querySelector('.education-card');
+  if (educationCard && !educationCard.textContent.toLowerCase().includes('turku')) {
+    const article = document.createElement('article');
+    article.className = 'admission-entry';
+    article.innerHTML = '<div class="logo-mark blue">UTU</div><div><strong>Master’s Programme — Admission</strong><span>University of Turku, Finland</span><p>Admitted to a master’s programme.</p></div>';
+    educationCard.appendChild(article);
+  }
+
+  const footerBadges = document.querySelector('.footer-badges');
+  if (footerBadges && !footerBadges.textContent.toLowerCase().includes('turku')) {
+    const badge = document.createElement('span');
+    badge.textContent = 'University of Turku';
+    footerBadges.appendChild(badge);
+  }
 
   const makeLogo = (university, fallback) => {
     const img = document.createElement('img');
@@ -42,6 +69,7 @@
     const value = (text || '').toLowerCase();
     if (value.includes('notre dame')) return universities.notreDame;
     if (value.includes('aligarh') || value.includes('amu')) return universities.amu;
+    if (value.includes('turku') || value.includes('utu')) return universities.turku;
     if (value.includes('murdoch') || value.trim() === 'mu' || value.includes('phd')) return universities.murdoch;
     return null;
   };
@@ -74,35 +102,34 @@
   document.querySelectorAll('.footer-badges span').forEach(item => {
     const university = matchUniversity(item.textContent);
     if (!university) return;
-    item.insertBefore(makeLogo(university), item.firstChild);
+    if (!item.querySelector('.uni-logo')) item.insertBefore(makeLogo(university), item.firstChild);
   });
 
   const socialIcons = [
     {
       match: href => href.includes('linkedin.com'),
       label: 'LinkedIn',
-      src: 'https://cdn.simpleicons.org/linkedin/FFFFFF'
+      svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5.2 3.2A2.2 2.2 0 1 1 .8 3.2a2.2 2.2 0 0 1 4.4 0ZM1.3 8h3.8v12.7H1.3V8Zm6.1 0H11v1.7h.1c.5-.9 1.8-2.2 3.9-2.2 4.1 0 4.9 2.7 4.9 6.2v7h-3.8v-6.2c0-1.5 0-3.5-2.2-3.5s-2.5 1.7-2.5 3.4v6.3H7.4V8Z"/></svg>'
     },
     {
       match: href => href.includes('github.com'),
       label: 'GitHub',
-      src: 'https://cdn.simpleicons.org/github/FFFFFF'
+      svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.7.5.1.7-.2.7-.5v-2c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 0 1.6 1.1 1.6 1.1.9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5a4 4 0 0 1 1-2.8c-.1-.3-.4-1.3.1-2.8 0 0 .9-.3 2.9 1.1A9.7 9.7 0 0 1 12 7a9.7 9.7 0 0 1 2.6.4c2-1.4 2.9-1.1 2.9-1.1.5 1.5.2 2.5.1 2.8a4 4 0 0 1 1 2.8c0 3.9-2.4 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5a10.2 10.2 0 0 0 6.8-9.7C22 6.6 17.5 2 12 2Z"/></svg>'
     },
     {
       match: href => href.includes('scholar.google.com'),
       label: 'Google Scholar',
-      src: 'https://cdn.simpleicons.org/googlescholar/FFFFFF'
+      svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 3 9 5-9 5-9-5 9-5Zm-6 8.7 6 3.3 6-3.3v4.1c0 2.1-2.7 4.2-6 4.2s-6-2.1-6-4.2v-4.1Z"/></svg>'
     },
     {
       match: href => href.startsWith('mailto:'),
       label: 'Email',
-      src: 'https://cdn.simpleicons.org/gmail/FFFFFF'
+      svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5h18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm0 2 9 6 9-6H3Zm18 10V9.4l-8.4 5.6a1 1 0 0 1-1.2 0L3 9.4V17h18Z"/></svg>'
     },
     {
       match: href => href.endsWith('cv.html'),
       label: 'CV',
-      src: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z%22/%3E%3Cpath d=%22M14 2v6h6M8 13h8M8 17h6%22/%3E%3C/svg%3E',
-      className: 'cv-icon'
+      svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 0v6h6M8 13h8M8 17h6"/></svg>'
     }
   ];
 
@@ -114,20 +141,12 @@
     link.textContent = '';
     link.setAttribute('aria-label', icon.label);
     link.title = icon.label;
-
-    const img = document.createElement('img');
-    img.className = `social-icon${icon.className ? ` ${icon.className}` : ''}`;
-    img.src = icon.src;
-    img.alt = '';
-    img.width = 24;
-    img.height = 24;
-    img.decoding = 'async';
+    link.insertAdjacentHTML('afterbegin', icon.svg);
 
     const label = document.createElement('span');
     label.className = 'social-label';
     label.textContent = icon.label;
-
-    link.append(img, label);
+    link.appendChild(label);
   });
 
   const year = document.getElementById('year');
