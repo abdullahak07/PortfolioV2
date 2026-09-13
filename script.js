@@ -6,6 +6,11 @@
   logoStyles.href = 'university-logos.css?v=1';
   document.head.appendChild(logoStyles);
 
+  const footerIconStyles = document.createElement('link');
+  footerIconStyles.rel = 'stylesheet';
+  footerIconStyles.href = 'footer-icons.css?v=1';
+  document.head.appendChild(footerIconStyles);
+
   const universities = {
     murdoch: {
       name: 'Murdoch University',
@@ -70,6 +75,59 @@
     const university = matchUniversity(item.textContent);
     if (!university) return;
     item.insertBefore(makeLogo(university), item.firstChild);
+  });
+
+  const socialIcons = [
+    {
+      match: href => href.includes('linkedin.com'),
+      label: 'LinkedIn',
+      src: 'https://cdn.simpleicons.org/linkedin/FFFFFF'
+    },
+    {
+      match: href => href.includes('github.com'),
+      label: 'GitHub',
+      src: 'https://cdn.simpleicons.org/github/FFFFFF'
+    },
+    {
+      match: href => href.includes('scholar.google.com'),
+      label: 'Google Scholar',
+      src: 'https://cdn.simpleicons.org/googlescholar/FFFFFF'
+    },
+    {
+      match: href => href.startsWith('mailto:'),
+      label: 'Email',
+      src: 'https://cdn.simpleicons.org/gmail/FFFFFF'
+    },
+    {
+      match: href => href.endsWith('cv.html'),
+      label: 'CV',
+      src: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z%22/%3E%3Cpath d=%22M14 2v6h6M8 13h8M8 17h6%22/%3E%3C/svg%3E',
+      className: 'cv-icon'
+    }
+  ];
+
+  document.querySelectorAll('.socials a').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const icon = socialIcons.find(item => item.match(href));
+    if (!icon) return;
+
+    link.textContent = '';
+    link.setAttribute('aria-label', icon.label);
+    link.title = icon.label;
+
+    const img = document.createElement('img');
+    img.className = `social-icon${icon.className ? ` ${icon.className}` : ''}`;
+    img.src = icon.src;
+    img.alt = '';
+    img.width = 24;
+    img.height = 24;
+    img.decoding = 'async';
+
+    const label = document.createElement('span');
+    label.className = 'social-label';
+    label.textContent = icon.label;
+
+    link.append(img, label);
   });
 
   const year = document.getElementById('year');
