@@ -13,13 +13,27 @@
 
   const assistantStyles = document.createElement('link');
   assistantStyles.rel = 'stylesheet';
-  assistantStyles.href = 'assistant.css?v=2';
+  assistantStyles.href = 'assistant.css?v=3';
   document.head.appendChild(assistantStyles);
 
   const assistantScript = document.createElement('script');
-  assistantScript.src = 'assistant.js?v=2';
+  assistantScript.src = 'assistant.js?v=3';
   assistantScript.async = true;
   document.head.appendChild(assistantScript);
+
+  /* Use the supplied local portrait directly. Never rely on a CSS background. */
+  const portraitImage = document.querySelector('.portrait-circle img');
+  if (portraitImage) {
+    portraitImage.src = 'assets/profile-abdullah-hires.jpg?v=4';
+    portraitImage.removeAttribute('srcset');
+    portraitImage.style.opacity = '1';
+    portraitImage.style.visibility = 'visible';
+    portraitImage.addEventListener('error', () => {
+      portraitImage.src = 'https://avatars.githubusercontent.com/u/53994342?v=4';
+      portraitImage.style.opacity = '1';
+      portraitImage.style.visibility = 'visible';
+    }, { once: true });
+  }
 
   const universities = {
     murdoch: {
