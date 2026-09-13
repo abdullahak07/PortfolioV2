@@ -164,11 +164,13 @@ body.ask-open{overflow:hidden}
   white-space:nowrap!important;
 }
 
-/* Higher-resolution, less aggressive crop from Abdullah's supplied original photo. */
+/* Supplied original portrait, balanced crop, rendered without extra zoom. */
 .portrait-circle{
-  background:url('assets/profile-abdullah-hires.jpg') center center/cover no-repeat!important;
+  background:url('/api/profile?v=3') center center/cover no-repeat!important;
 }
-.portrait-circle img{opacity:0!important}
+.portrait-circle img{
+  opacity:0!important;
+}
 
 @media(max-width:700px){
   .ask-panel{right:8px;bottom:8px;width:calc(100vw - 16px);height:calc(100dvh - 16px);border-radius:20px}
