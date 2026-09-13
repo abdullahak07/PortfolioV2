@@ -1,6 +1,77 @@
 (() => {
   'use strict';
 
+  const logoStyles = document.createElement('link');
+  logoStyles.rel = 'stylesheet';
+  logoStyles.href = 'university-logos.css?v=1';
+  document.head.appendChild(logoStyles);
+
+  const universities = {
+    murdoch: {
+      name: 'Murdoch University',
+      src: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://www.murdoch.edu.au/'
+    },
+    notreDame: {
+      name: 'The University of Notre Dame Australia',
+      src: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://www.notredame.edu.au/'
+    },
+    amu: {
+      name: 'Aligarh Muslim University',
+      src: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://www.amu.ac.in/'
+    }
+  };
+
+  const makeLogo = (university, fallback) => {
+    const img = document.createElement('img');
+    img.className = 'uni-logo';
+    img.src = university.src;
+    img.alt = `${university.name} logo`;
+    img.width = 128;
+    img.height = 128;
+    img.decoding = 'async';
+    img.addEventListener('error', () => fallback?.(), { once: true });
+    return img;
+  };
+
+  const matchUniversity = text => {
+    const value = (text || '').toLowerCase();
+    if (value.includes('notre dame')) return universities.notreDame;
+    if (value.includes('aligarh') || value.includes('amu')) return universities.amu;
+    if (value.includes('murdoch') || value.trim() === 'mu' || value.includes('phd')) return universities.murdoch;
+    return null;
+  };
+
+  document.querySelectorAll('.institution').forEach(item => {
+    const university = matchUniversity(item.textContent);
+    if (!university) return;
+    const fallbackMark = item.querySelector('b');
+    const img = makeLogo(university, () => item.classList.remove('has-uni-logo'));
+    item.insertBefore(img, item.firstChild);
+    item.classList.add('has-uni-logo');
+    if (fallbackMark) fallbackMark.hidden = true;
+    img.addEventListener('error', () => { if (fallbackMark) fallbackMark.hidden = false; }, { once: true });
+  });
+
+  document.querySelectorAll('.logo-mark').forEach(mark => {
+    const context = `${mark.textContent} ${mark.closest('article')?.textContent || ''}`;
+    const university = matchUniversity(context);
+    if (!university) return;
+    const fallback = mark.textContent.trim();
+    mark.textContent = '';
+    const img = makeLogo(university, () => {
+      mark.classList.remove('has-uni-logo');
+      mark.textContent = fallback;
+    });
+    mark.classList.add('has-uni-logo');
+    mark.appendChild(img);
+  });
+
+  document.querySelectorAll('.footer-badges span').forEach(item => {
+    const university = matchUniversity(item.textContent);
+    if (!university) return;
+    item.insertBefore(makeLogo(university), item.firstChild);
+  });
+
   const year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
 
