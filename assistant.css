@@ -164,12 +164,20 @@ body.ask-open{overflow:hidden}
   white-space:nowrap!important;
 }
 
-/* Supplied original portrait, balanced crop, rendered without extra zoom. */
+/* Always render the real portrait image; never hide it behind a CSS background. */
 .portrait-circle{
-  background:url('/api/profile?v=3') center center/cover no-repeat!important;
+  background:#e6eaf0!important;
 }
 .portrait-circle img{
-  opacity:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  image-rendering:auto!important;
 }
 
 @media(max-width:700px){
