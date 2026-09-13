@@ -3,8 +3,9 @@
 
   const botIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 2.5 19 6.6v8.8L12 19.5 5 15.4V6.6L12 2.5Zm0 4.1 3.8 2.2v4.4L12 15.4l-3.8-2.2V8.8L12 6.6Zm0 0v8.8M8.2 8.8l7.6 4.4m0-4.4-7.6 4.4"/></svg>';
   const sendIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m21 3-8.4 18-2.2-7.4L3 11.4 21 3Zm-10.6 10.6L21 3"/></svg>';
-  const mailIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 6h18v12H3z"/><path fill="none" stroke="currentColor" stroke-width="1.8" d="m3 7 9 6 9-6"/></svg>';
+  const mailIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg>';
   const fileIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16h16V8l-6-6Zm0 0v6h6M8 13h8M8 17h6"/></svg>';
+  const downloadIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>';
 
   const suggestions = [
     'What does Abdullah research?',
@@ -16,7 +17,58 @@
   ];
 
   const oldPanel = document.querySelector('[data-connect-panel]');
-  if (!oldPanel) return;
+  const divider = document.querySelector('.connect-divider');
+  const centerOriginal = divider?.querySelector('[data-connect-open]');
+  const floatingOriginal = document.querySelector('.connect-button[data-connect-open]');
+  if (!oldPanel || !floatingOriginal) return;
+
+  /* Keep the middle CTA as Connect and give it only CV + Email actions. */
+  oldPanel.remove();
+
+  const quickPanel = document.createElement('div');
+  quickPanel.className = 'connect-quick-panel';
+  quickPanel.setAttribute('aria-hidden', 'true');
+  quickPanel.innerHTML = `
+    <a class="connect-quick-action" href="cv.html">
+      <span class="connect-quick-icon">${downloadIcon}</span>
+      <span>Download CV</span>
+    </a>
+    <a class="connect-quick-action" href="mailto:aahmad607@gmail.com?subject=Portfolio%20enquiry">
+      <span class="connect-quick-icon">${mailIcon}</span>
+      <span>Email</span>
+    </a>`;
+  divider?.appendChild(quickPanel);
+
+  let centerTrigger = null;
+  if (centerOriginal) {
+    centerTrigger = centerOriginal.cloneNode(true);
+    centerTrigger.removeAttribute('data-connect-open');
+    centerTrigger.setAttribute('data-connect-quick-open', '');
+    centerTrigger.setAttribute('aria-expanded', 'false');
+    centerTrigger.setAttribute('aria-label', 'Connect with Abdullah');
+    centerOriginal.replaceWith(centerTrigger);
+  }
+
+  const setQuickOpen = open => {
+    quickPanel.classList.toggle('open', open);
+    quickPanel.setAttribute('aria-hidden', String(!open));
+    centerTrigger?.setAttribute('aria-expanded', String(open));
+  };
+
+  centerTrigger?.addEventListener('click', event => {
+    event.stopPropagation();
+    setQuickOpen(!quickPanel.classList.contains('open'));
+  });
+  quickPanel.addEventListener('click', event => event.stopPropagation());
+
+  /* The bottom-right button is the chat launcher only. */
+  const chatTrigger = floatingOriginal.cloneNode(false);
+  chatTrigger.removeAttribute('data-connect-open');
+  chatTrigger.setAttribute('data-ask-open', '');
+  chatTrigger.setAttribute('aria-label', 'Open Ask Abdullah assistant');
+  chatTrigger.classList.add('ask-launcher-trigger');
+  chatTrigger.innerHTML = `<span class="ask-trigger-icon">${botIcon}</span><span class="ask-trigger-label">Ask Abdullah</span>`;
+  floatingOriginal.replaceWith(chatTrigger);
 
   const panel = document.createElement('section');
   panel.className = 'ask-panel';
@@ -49,18 +101,7 @@
       </div>
       <p class="ask-note">Answers are grounded in Abdullah’s verified public profile and research information.</p>
     </footer>`;
-  oldPanel.replaceWith(panel);
-
-  const triggers = [...document.querySelectorAll('[data-connect-open]')].map(old => {
-    const clean = old.cloneNode(false);
-    clean.removeAttribute('data-connect-open');
-    clean.setAttribute('data-ask-open', '');
-    clean.setAttribute('aria-label', 'Open Ask Abdullah assistant');
-    clean.classList.add('ask-launcher-trigger');
-    clean.innerHTML = `<span class="ask-trigger-icon">${botIcon}</span><span>Ask Abdullah</span>`;
-    old.replaceWith(clean);
-    return clean;
-  });
+  document.body.appendChild(panel);
 
   const scroll = panel.querySelector('.ask-scroll');
   const welcome = panel.querySelector('.ask-welcome');
@@ -73,7 +114,6 @@
   const close = panel.querySelector('.ask-close');
   const history = [];
   let busy = false;
-  let lastTrigger = null;
 
   suggestions.forEach(text => {
     const button = document.createElement('button');
@@ -89,19 +129,26 @@
     panel.setAttribute('aria-hidden', String(!open));
     document.body.classList.toggle('ask-open', open);
     if (open) {
+      setQuickOpen(false);
       window.setTimeout(() => input.focus(), 80);
-    } else if (lastTrigger) {
-      lastTrigger.focus();
+    } else {
+      chatTrigger.focus();
     }
   };
 
-  triggers.forEach(trigger => trigger.addEventListener('click', () => {
-    lastTrigger = trigger;
-    setOpen(true);
-  }));
+  chatTrigger.addEventListener('click', () => setOpen(true));
   close.addEventListener('click', () => setOpen(false));
+
+  document.addEventListener('click', event => {
+    if (!quickPanel.classList.contains('open')) return;
+    if (quickPanel.contains(event.target) || centerTrigger?.contains(event.target)) return;
+    setQuickOpen(false);
+  });
+
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && panel.classList.contains('open')) setOpen(false);
+    if (event.key !== 'Escape') return;
+    if (panel.classList.contains('open')) setOpen(false);
+    setQuickOpen(false);
   });
 
   function addMessage(role, text, source = '') {
