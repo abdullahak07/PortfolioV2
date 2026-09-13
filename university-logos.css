@@ -1,0 +1,58 @@
+/* University identity treatment: real site icons + readable institution names. */
+.uni-logo{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+  flex:0 0 auto;
+  border-radius:8px;
+  background:#fff;
+}
+
+.institution{
+  gap:10px!important;
+  padding:6px 10px!important;
+}
+.institution .uni-logo{
+  width:34px;
+  height:34px;
+}
+.institution em{
+  display:block;
+  min-width:max-content;
+}
+
+.logo-mark.has-uni-logo{
+  background:#fff!important;
+  color:inherit!important;
+  border:1px solid var(--line);
+  padding:8px;
+  box-shadow:0 6px 16px rgba(25,48,85,.06);
+}
+.logo-mark.has-uni-logo .uni-logo{
+  width:100%;
+  height:100%;
+  border-radius:6px;
+}
+
+.footer-badges span{
+  display:inline-flex!important;
+  align-items:center;
+  gap:8px;
+}
+.footer-badges .uni-logo{
+  width:26px;
+  height:26px;
+  border-radius:6px;
+  background:#fff;
+}
+
+@media(max-width:1180px){
+  .institution em{display:none}
+  .institution{padding:5px!important}
+  .institution .uni-logo{width:32px;height:32px}
+}
+
+@media(max-width:760px){
+  .institution-strip{display:none!important}
+  .logo-mark.has-uni-logo{width:68px;height:68px}
+}
