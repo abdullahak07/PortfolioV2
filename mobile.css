@@ -1,0 +1,290 @@
+/* Mobile-first corrective layer for PortfolioV2.
+   Loaded after the core design system; intentionally focused on touch devices and narrow viewports. */
+
+@media (max-width: 960px){
+  :root{
+    --gutter:clamp(18px,4.8vw,28px);
+    --radius:22px;
+  }
+
+  html,body{max-width:100%;overflow-x:clip}
+  body{padding-bottom:78px}
+  img,svg{max-width:100%}
+  .content{width:100%;padding-left:var(--gutter);padding-right:var(--gutter)}
+  section[id]{scroll-margin-top:72px}
+
+  /* Compact mobile identity/header instead of a blank menu bar. */
+  .site-header{top:0!important}
+  .nav-shell{
+    min-height:62px!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:12px!important;
+    padding-left:var(--gutter)!important;
+    padding-right:var(--gutter)!important;
+  }
+  .nav-shell::before{
+    content:"Abdullah Ahmad Khan";
+    display:block;
+    min-width:0;
+    overflow:hidden;
+    color:#0c1c3d;
+    font-size:15px;
+    font-weight:800;
+    line-height:1.1;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .main-nav,.institution-strip{display:none!important}
+  .menu-button{
+    display:inline-flex!important;
+    align-items:center;
+    justify-content:center;
+    min-width:62px;
+    min-height:44px;
+    padding:0 12px;
+    border:1px solid #dbe4f0!important;
+    border-radius:12px;
+    background:#fff!important;
+  }
+  .mobile-menu{
+    padding:8px var(--gutter) 14px!important;
+    max-height:calc(100dvh - 64px);
+    overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+  .mobile-menu.open{display:grid!important}
+  .mobile-menu a{
+    display:flex;
+    align-items:center;
+    min-height:48px;
+    padding:0 2px!important;
+    font-size:15px;
+  }
+
+  /* Single-column content that does not inherit desktop min-heights. */
+  .hero{padding:32px 0 34px!important}
+  .hero-grid{grid-template-columns:1fr!important;gap:30px!important}
+  .hero-copy{min-width:0}
+  .hero-copy h1{
+    margin:0 0 24px!important;
+    font-size:clamp(38px,10.5vw,48px)!important;
+    line-height:1.02!important;
+    letter-spacing:-.035em!important;
+  }
+  .hero-copy p{
+    max-width:none!important;
+    margin-bottom:17px!important;
+    font-size:16px!important;
+    line-height:1.64!important;
+    overflow-wrap:anywhere;
+  }
+  .hero-links{gap:11px 18px!important;margin-top:24px!important}
+  .hero-links a{min-height:38px;display:inline-flex;align-items:center;font-size:14px!important}
+
+  .hero-profile{width:100%!important;max-width:390px!important;margin:0 auto!important}
+  .portrait-circle{
+    width:min(76vw,320px)!important;
+    max-width:320px!important;
+    border-width:4px!important;
+  }
+  .hero-profile h2{margin-top:16px!important;font-size:clamp(27px,7.5vw,32px)!important;line-height:1.08!important}
+  .hero-profile>p{font-size:13px!important}
+  .profile-badges{gap:6px!important;margin-top:12px!important}
+  .profile-badges span{padding:7px 9px!important;font-size:10px!important}
+
+  .section{padding:48px 0!important}
+  .section-heading{margin-bottom:24px!important}
+  .section-heading h2{font-size:clamp(30px,8.5vw,38px)!important;line-height:1.08!important}
+  .section-heading p{margin-top:8px!important;font-size:15px!important;line-height:1.55!important}
+
+  /* Connect is a compact in-flow action; floating assistant stays separate. */
+  .connect-divider{min-height:68px!important;height:auto!important;padding:7px 14px!important}
+  .connect-divider>button{
+    min-width:202px!important;
+    min-height:54px!important;
+    height:54px!important;
+    padding:0 22px!important;
+    gap:11px!important;
+    font-size:16px!important;
+  }
+  .connect-divider>button span{font-size:21px!important}
+  .connect-quick-panel{width:100%!important;margin:9px auto 12px!important;padding:0 2px!important;gap:9px!important}
+  .connect-quick-action{
+    width:min(100%,360px)!important;
+    min-width:0!important;
+    min-height:58px!important;
+    padding:0 16px!important;
+    gap:11px!important;
+    font-size:15px!important;
+  }
+  .connect-quick-action>span:not(.connect-quick-icon){font-size:15px!important}
+  .connect-quick-icon{width:38px!important;height:38px!important;flex-basis:38px!important}
+  .connect-quick-icon svg{width:20px!important;height:20px!important}
+
+  /* Research/status cards */
+  .status-card{
+    grid-template-columns:1fr!important;
+    gap:20px!important;
+    padding:20px!important;
+    border-radius:20px!important;
+  }
+  .status-feature{padding:0 0 18px!important;border-right:0!important;border-bottom:1px solid #dbe4f0!important}
+  .status-feature strong{font-size:34px!important}
+  .pipeline-head{align-items:flex-start;flex-direction:column;gap:4px!important}
+  .pipeline-track{grid-template-columns:1fr!important;gap:10px!important;margin:20px 0!important}
+  .pipeline-node{min-width:0!important}
+  .pipeline-line{width:4px!important;height:24px!important;margin:0 auto!important}
+  .pipeline-notes{grid-template-columns:1fr!important;gap:13px!important;padding-top:17px!important}
+
+  .research-cards,.skills-grid,.experience-grid,.two-panel-grid{grid-template-columns:1fr!important;gap:16px!important}
+  .research-card{
+    min-height:0!important;
+    padding:21px!important;
+    border-radius:20px!important;
+  }
+  .card-top{gap:14px!important}
+  .card-number{font-size:46px!important}
+  .research-card svg{width:88px!important;height:66px!important}
+  .research-card h3{margin:20px 0 9px!important;font-size:22px!important}
+  .research-card>p{font-size:14px!important;line-height:1.6!important}
+  .card-foot{flex-wrap:wrap;gap:10px!important;margin-top:24px!important}
+
+  /* GitHub calendar: card fits the viewport; calendar itself scrolls naturally like GitHub. */
+  .activity-card{padding:18px!important;border-radius:20px!important;overflow:hidden!important}
+  .activity-head,.activity-foot{align-items:flex-start!important;flex-direction:column!important;gap:7px!important}
+  .activity-head strong{font-size:19px!important}
+  .activity-head a{font-size:12px!important;overflow-wrap:anywhere}
+  .activity-months{display:none!important}
+  .activity-section .activity-card .activity-months.github-months{display:grid!important}
+  .activity-section .heatmap-wrap,
+  .activity-section .heatmap-wrap.github-calendar-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    margin:12px 0 0!important;
+    padding:4px 0 12px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;
+    scrollbar-width:none;
+  }
+  .activity-section .heatmap-wrap::-webkit-scrollbar{display:none}
+  .activity-foot{margin-top:12px!important;font-size:10px!important}
+
+  /* Appointments, education, publications and skills */
+  .info-card{padding:20px!important;gap:15px!important;border-radius:20px!important}
+  .info-card.wide{grid-column:auto!important}
+  .info-card h3{font-size:19px!important}
+  .info-card h4{font-size:13px!important}
+  .info-card p{margin-top:10px!important;font-size:13px!important}
+  .logo-mark{width:56px!important;height:56px!important}
+
+  .publication-card{border-radius:20px!important}
+  .publication-card a{
+    grid-template-columns:minmax(0,1fr) 22px!important;
+    gap:7px 12px!important;
+    padding:18px!important;
+  }
+  .publication-card a span{grid-column:1/-1!important;font-size:10px!important}
+  .publication-card strong{font-size:14px!important;overflow-wrap:anywhere}
+
+  .education-card{border-radius:20px!important}
+  .education-card article{grid-template-columns:60px minmax(0,1fr)!important;gap:14px!important;padding:18px!important}
+  .education-card strong{font-size:16px!important}
+  .education-card span{font-size:13px!important}
+  .education-card p{font-size:13px!important}
+
+  .skill-card{padding:21px!important;border-radius:20px!important}
+  .skill-icon{height:46px!important;font-size:38px!important}
+  .skill-card h3{margin-top:12px!important;font-size:22px!important}
+  .skill-card h4{margin-top:21px!important}
+
+  .white-panel{padding:20px!important;border-radius:20px!important}
+  .list-row{flex-direction:column!important;gap:3px!important;padding:13px 0!important}
+  .list-row span{text-align:left!important}
+
+  /* Footer remains compact and centred on phones. */
+  .site-footer{padding-bottom:max(94px,calc(78px + env(safe-area-inset-bottom)))!important}
+  .footer-top,.footer-bottom{align-items:center!important;flex-direction:column!important;text-align:center!important}
+  .footer-top{gap:14px!important}
+  .footer-top>strong{font-size:16px!important}
+  .footer-badges{justify-content:center!important;gap:8px!important}
+  .footer-badges span{padding:8px 10px!important;font-size:10px!important}
+  .socials{justify-content:center!important;flex-wrap:wrap!important}
+
+  /* Remove the oversized floating Top control. Native scrolling is enough on phones. */
+  .top-button{display:none!important}
+
+  body .connect-button.ask-launcher-trigger{
+    right:max(12px,env(safe-area-inset-right))!important;
+    bottom:max(12px,env(safe-area-inset-bottom))!important;
+    min-width:158px!important;
+    height:52px!important;
+    padding:0 14px!important;
+    gap:9px!important;
+    border-radius:18px!important;
+  }
+  body .connect-button.ask-launcher-trigger>.ask-trigger-icon{
+    width:34px!important;
+    height:34px!important;
+    flex-basis:34px!important;
+    border-radius:10px!important;
+  }
+  body .connect-button.ask-launcher-trigger>.ask-trigger-label{font-size:14px!important}
+
+  /* Full-height assistant that respects iOS safe areas and keyboard resizing. */
+  body .ask-panel{
+    top:max(6px,env(safe-area-inset-top))!important;
+    right:6px!important;
+    bottom:max(6px,env(safe-area-inset-bottom))!important;
+    left:6px!important;
+    width:auto!important;
+    height:auto!important;
+    max-width:none!important;
+    max-height:none!important;
+    border-radius:18px!important;
+  }
+  .ask-header{min-height:68px!important;padding:10px 12px!important;gap:10px!important}
+  .ask-avatar{width:40px!important;height:40px!important;flex-basis:40px!important;border-radius:12px!important}
+  .ask-heading strong{font-size:17px!important}
+  .ask-heading span{font-size:10px!important;line-height:1.25!important}
+  .ask-close{width:40px!important;height:40px!important}
+  .ask-scroll{padding:16px 13px 20px!important}
+  .ask-welcome,.ask-bubble{font-size:13px!important}
+  .ask-bubble{max-width:94%!important;padding:11px 13px!important}
+  .ask-footer{padding:10px 10px max(10px,env(safe-area-inset-bottom))!important}
+  .ask-form{grid-template-columns:minmax(0,1fr) 48px!important;gap:7px!important}
+  .ask-input{height:50px!important;font-size:16px!important;padding:0 12px!important;border-radius:14px!important}
+  .ask-send{width:48px!important;height:50px!important;border-radius:14px!important}
+  .ask-actions{gap:16px!important;flex-wrap:wrap!important}
+  .ask-note{font-size:8px!important}
+}
+
+@media (max-width: 480px){
+  :root{--gutter:18px}
+  .hero-copy h1{font-size:40px!important}
+  .hero-copy p{font-size:15.5px!important;line-height:1.62!important}
+  .portrait-circle{width:min(74vw,292px)!important;max-width:292px!important}
+  .hero-profile h2{font-size:27px!important}
+  .section{padding:44px 0!important}
+  .section-heading h2{font-size:30px!important}
+
+  .info-card{grid-template-columns:1fr!important}
+  .info-card .logo-mark{width:52px!important;height:52px!important}
+  .education-card article{grid-template-columns:1fr!important}
+  .education-card .logo-mark{width:52px!important;height:52px!important}
+
+  .activity-section .activity-card{margin-left:0!important;margin-right:0!important}
+  .activity-section .activity-card .activity-months.github-months{font-size:10px!important}
+
+  body .connect-button.ask-launcher-trigger{min-width:150px!important;height:50px!important}
+  body .connect-button.ask-launcher-trigger>.ask-trigger-label{font-size:13px!important}
+}
+
+@media (hover:none){
+  .research-card:hover,.connect-quick-action:hover,.socials a:hover{transform:none!important}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important}
+}
