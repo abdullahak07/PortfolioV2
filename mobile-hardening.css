@@ -1,0 +1,108 @@
+/* Mobile hardening: fixes the specific iPhone layout/overlap issues. */
+@media (max-width:700px){
+  /* Do not let the navigation cover section headings while scrolling. */
+  .site-header{position:relative!important;top:auto!important}
+  section[id]{scroll-margin-top:12px!important}
+
+  /* Keep phone typography compact and readable. */
+  .content{padding-left:18px!important;padding-right:18px!important}
+  .section{padding:42px 0!important}
+  .section-heading{margin-bottom:20px!important}
+  .section-heading h2{font-size:30px!important;line-height:1.08!important}
+  .section-heading p{font-size:14px!important;line-height:1.5!important}
+
+  /* GitHub calendar: show the full year inside the card instead of clipping half of it. */
+  .activity-card{
+    --gh-cell:4px!important;
+    --gh-gap:1px!important;
+    padding:16px!important;
+    overflow:hidden!important;
+    border-radius:18px!important;
+  }
+  .activity-card.is-live .activity-head strong{font-size:18px!important;line-height:1.2!important}
+  .activity-head{gap:5px!important}
+  .activity-head a{font-size:11px!important}
+  .activity-months.github-months{
+    display:grid!important;
+    grid-template-columns:repeat(var(--gh-weeks,53),var(--gh-cell))!important;
+    column-gap:var(--gh-gap)!important;
+    width:max-content!important;
+    min-width:0!important;
+    margin:7px 0 7px!important;
+    padding:0!important;
+    font-size:7px!important;
+    line-height:1!important;
+    overflow:visible!important;
+  }
+  .activity-months.github-months span:nth-child(even){display:none!important}
+  .heatmap-wrap.github-calendar-wrap{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:2px 0 8px!important;
+    overflow:hidden!important;
+  }
+  .gh-weekdays{display:none!important}
+  .activity-grid.github-live-grid{
+    margin:0!important;
+    width:max-content!important;
+    max-width:100%!important;
+    grid-template-rows:repeat(7,var(--gh-cell))!important;
+    grid-auto-columns:var(--gh-cell)!important;
+    gap:var(--gh-gap)!important;
+  }
+  .github-live-grid .gh-day{
+    width:var(--gh-cell)!important;
+    height:var(--gh-cell)!important;
+    min-width:var(--gh-cell)!important;
+    min-height:var(--gh-cell)!important;
+    border-radius:1px!important;
+  }
+  .activity-foot{margin-top:10px!important;gap:8px!important;font-size:9px!important}
+  .activity-foot span:last-child{gap:4px!important}
+  .activity-foot i{width:11px!important;height:11px!important}
+
+  /* Touch devices do not have hover; suppress the large persistent tooltip. */
+  .gh-tooltip{display:none!important}
+
+  /* Reduce floating assistant obstruction to a small circular launcher. */
+  body .connect-button.ask-launcher-trigger{
+    right:max(12px,env(safe-area-inset-right))!important;
+    bottom:max(12px,env(safe-area-inset-bottom))!important;
+    width:52px!important;
+    min-width:52px!important;
+    height:52px!important;
+    padding:0!important;
+    border-radius:50%!important;
+    gap:0!important;
+  }
+  body .connect-button.ask-launcher-trigger>.ask-trigger-icon{
+    width:38px!important;
+    height:38px!important;
+    flex:0 0 38px!important;
+    border-radius:12px!important;
+  }
+  body .connect-button.ask-launcher-trigger>.ask-trigger-label{display:none!important}
+
+  /* Cards should sit naturally in the phone viewport. */
+  .info-card{grid-template-columns:56px minmax(0,1fr)!important;padding:18px!important;gap:14px!important}
+  .info-card .logo-mark{width:52px!important;height:52px!important}
+  .education-card article{grid-template-columns:56px minmax(0,1fr)!important;padding:18px!important;gap:14px!important}
+  .education-card .logo-mark{width:52px!important;height:52px!important}
+  .research-card,.skill-card,.white-panel{padding:18px!important}
+  .publication-card a{padding:17px!important}
+
+  /* Avoid Safari zoom and horizontal accidental movement. */
+  .ask-input{font-size:16px!important}
+  html,body{overflow-x:hidden!important}
+}
+
+@media (max-width:380px){
+  .activity-card{--gh-cell:3.7px!important;--gh-gap:.8px!important}
+  .activity-months.github-months{font-size:6.5px!important}
+}
+
+@media (hover:none), (pointer:coarse){
+  .gh-tooltip{display:none!important}
+}
