@@ -22,14 +22,13 @@
   const floatingOriginal = document.querySelector('.connect-button[data-connect-open]');
   if (!oldPanel || !floatingOriginal) return;
 
-  /* Keep the middle CTA as Connect and give it only CV + Email actions. */
   oldPanel.remove();
 
   const quickPanel = document.createElement('div');
   quickPanel.className = 'connect-quick-panel';
   quickPanel.setAttribute('aria-hidden', 'true');
   quickPanel.innerHTML = `
-    <a class="connect-quick-action" href="cv.html">
+    <a class="connect-quick-action" href="/cv">
       <span class="connect-quick-icon">${downloadIcon}</span>
       <span>Download CV</span>
     </a>
@@ -61,7 +60,6 @@
   });
   quickPanel.addEventListener('click', event => event.stopPropagation());
 
-  /* The bottom-right button is the chat launcher only. */
   const chatTrigger = floatingOriginal.cloneNode(false);
   chatTrigger.removeAttribute('data-connect-open');
   chatTrigger.setAttribute('data-ask-open', '');
@@ -97,7 +95,7 @@
       </form>
       <div class="ask-actions">
         <a href="mailto:aahmad607@gmail.com?subject=Portfolio%20enquiry">${mailIcon}<span>Contact</span></a>
-        <a href="cv.html">${fileIcon}<span>View CV</span></a>
+        <a href="/cv">${fileIcon}<span>View CV</span></a>
       </div>
       <p class="ask-note">Answers are grounded in Abdullah’s verified public profile and research information.</p>
     </footer>`;
