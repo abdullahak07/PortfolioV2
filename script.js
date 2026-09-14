@@ -1,38 +1,33 @@
 (() => {
   'use strict';
 
-  const logoStyles = document.createElement('link');
-  logoStyles.rel = 'stylesheet';
-  logoStyles.href = 'university-logos.css?v=2';
-  document.head.appendChild(logoStyles);
+  const addStylesheet = (href) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
+  };
 
-  const footerIconStyles = document.createElement('link');
-  footerIconStyles.rel = 'stylesheet';
-  footerIconStyles.href = 'footer-icons.css?v=2';
-  document.head.appendChild(footerIconStyles);
-
-  const assistantStyles = document.createElement('link');
-  assistantStyles.rel = 'stylesheet';
-  assistantStyles.href = 'assistant.css?v=3';
-  document.head.appendChild(assistantStyles);
+  addStylesheet('university-logos.css?v=2');
+  addStylesheet('footer-icons.css?v=2');
+  addStylesheet('assistant.css?v=4');
+  addStylesheet('activity.css?v=1');
 
   const assistantScript = document.createElement('script');
-  assistantScript.src = 'assistant.js?v=3';
+  assistantScript.src = 'assistant.js?v=4';
   assistantScript.async = true;
   document.head.appendChild(assistantScript);
 
-  /* Use the supplied local portrait directly. Never rely on a CSS background. */
+  /* Use the mountain photo supplied in this conversation, never the old GitHub portrait. */
   const portraitImage = document.querySelector('.portrait-circle img');
   if (portraitImage) {
-    portraitImage.src = 'assets/profile-abdullah-hires.jpg?v=4';
+    portraitImage.src = '/api/profile?v=5';
     portraitImage.removeAttribute('srcset');
     portraitImage.style.opacity = '1';
     portraitImage.style.visibility = 'visible';
-    portraitImage.addEventListener('error', () => {
-      portraitImage.src = 'https://avatars.githubusercontent.com/u/53994342?v=4';
-      portraitImage.style.opacity = '1';
-      portraitImage.style.visibility = 'visible';
-    }, { once: true });
+    portraitImage.style.display = 'block';
+    portraitImage.style.objectFit = 'cover';
+    portraitImage.style.objectPosition = 'center center';
   }
 
   const universities = {
@@ -161,12 +156,10 @@
     const href = link.getAttribute('href') || '';
     const icon = socialIcons.find(item => item.match(href));
     if (!icon) return;
-
     link.textContent = '';
     link.setAttribute('aria-label', icon.label);
     link.title = icon.label;
     link.insertAdjacentHTML('afterbegin', icon.svg);
-
     const label = document.createElement('span');
     label.className = 'social-label';
     label.textContent = icon.label;
@@ -194,28 +187,11 @@
   updateTopButton();
   topButton?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-  const connectPanel = document.querySelector('[data-connect-panel]');
-  const openButtons = document.querySelectorAll('[data-connect-open]');
-  const closeButton = document.querySelector('[data-connect-close]');
-  const setConnect = open => {
-    if (!connectPanel) return;
-    connectPanel.classList.toggle('open', open);
-    connectPanel.setAttribute('aria-hidden', String(!open));
-  };
-  openButtons.forEach(button => button.addEventListener('click', () => setConnect(true)));
-  closeButton?.addEventListener('click', () => setConnect(false));
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-      setConnect(false);
-      setMenu(false);
-    }
-  });
-
   const navLinks = [...document.querySelectorAll('.main-nav a[href^="#"]')];
   const sections = [...document.querySelectorAll('[data-section][id]')];
   if ('IntersectionObserver' in window && navLinks.length && sections.length) {
     const observer = new IntersectionObserver(entries => {
-      const best = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+      const best = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
       if (!best) return;
       const id = `#${best.target.id}`;
       navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === id));
@@ -223,17 +199,136 @@
     sections.forEach(section => observer.observe(section));
   }
 
-  const grid = document.getElementById('activityGrid');
-  if (grid) {
-    const levels = [];
-    for (let i = 0; i < 364; i++) {
-      const wave = Math.sin(i * 0.37) + Math.sin(i * 0.11) * 0.8 + Math.cos(i * 0.071) * 0.55;
-      const active = ((i * 17 + 11) % 29 === 0) || ((i * 13 + 7) % 41 === 0);
-      let level = wave > 1.35 ? 3 : wave > .55 ? 2 : wave > -.1 ? 1 : 0;
-      if (active) level = 4;
-      if (i > 300 && (i % 8 < 3)) level = Math.max(level, 2);
-      levels.push(level);
+  const formatContributionDate = date => new Intl.DateTimeFormat('en-AU', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'
+  }).format(new Date(`${date}T00:00:00Z`));
+
+  const renderGitHubActivity = async () => {
+    const grid = document.getElementById('activityGrid');
+    if (!grid) return;
+
+    const card = grid.closest('.activity-card');
+    const months = card?.querySelector('.activity-months');
+    const wrap = grid.parentElement;
+    const head = card?.querySelector('.activity-head strong');
+    const footText = card?.querySelector('.activity-foot > span:first-child');
+
+    grid.innerHTML = '';
+    grid.removeAttribute('aria-hidden');
+    grid.setAttribute('aria-label', 'Loading live GitHub contribution activity');
+
+    try {
+      const response = await fetch('https://github-contributions-api.jogruber.de/v4/abdullahak07?y=last', {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!response.ok) throw new Error(`Contribution API returned ${response.status}`);
+      const data = await response.json();
+      const days = Array.isArray(data.contributions) ? data.contributions.slice().sort((a,b) => a.date.localeCompare(b.date)) : [];
+      if (days.length < 300) throw new Error('Incomplete contribution history');
+
+      const totalValues = data.total && typeof data.total === 'object' ? Object.values(data.total) : [];
+      const total = Number(totalValues[0] || days.reduce((sum, day) => sum + Number(day.count || 0), 0));
+
+      const first = new Date(`${days[0].date}T00:00:00Z`);
+      const start = new Date(first);
+      start.setUTCDate(first.getUTCDate() - first.getUTCDay());
+      const dayMs = 86400000;
+      let maxWeek = 0;
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'gh-tooltip';
+      tooltip.setAttribute('role', 'tooltip');
+      document.body.appendChild(tooltip);
+
+      const hideTooltip = () => tooltip.classList.remove('visible');
+      const showTooltip = cell => {
+        tooltip.textContent = cell.dataset.tooltip || '';
+        tooltip.classList.add('visible');
+        const rect = cell.getBoundingClientRect();
+        const tip = tooltip.getBoundingClientRect();
+        let left = rect.left + rect.width / 2 - tip.width / 2;
+        left = Math.max(8, Math.min(window.innerWidth - tip.width - 8, left));
+        let top = rect.top - tip.height - 8;
+        if (top < 8) top = rect.bottom + 8;
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+      };
+
+      grid.className = 'activity-grid github-live-grid';
+      days.forEach(day => {
+        const date = new Date(`${day.date}T00:00:00Z`);
+        const elapsed = Math.round((date - start) / dayMs);
+        const week = Math.floor(elapsed / 7);
+        const row = date.getUTCDay();
+        maxWeek = Math.max(maxWeek, week);
+
+        const count = Number(day.count || 0);
+        const level = Math.max(0, Math.min(4, Number(day.level || 0)));
+        const label = `${count === 0 ? 'No contributions' : `${count} contribution${count === 1 ? '' : 's'}`} on ${formatContributionDate(day.date)}`;
+
+        const cell = document.createElement('span');
+        cell.className = `gh-day l${level}`;
+        cell.style.gridColumn = String(week + 1);
+        cell.style.gridRow = String(row + 1);
+        cell.dataset.tooltip = label;
+        cell.setAttribute('role', 'gridcell');
+        cell.setAttribute('aria-label', label);
+        cell.addEventListener('mouseenter', () => showTooltip(cell));
+        cell.addEventListener('mouseleave', hideTooltip);
+        cell.addEventListener('touchstart', () => showTooltip(cell), { passive: true });
+        grid.appendChild(cell);
+      });
+
+      const weekCount = maxWeek + 1;
+      card?.style.setProperty('--gh-weeks', String(weekCount));
+      card?.classList.add('is-live');
+      grid.setAttribute('role', 'grid');
+      grid.setAttribute('aria-label', `${total} GitHub contributions in the last year`);
+
+      if (head) head.textContent = `${total.toLocaleString()} contributions in the last year`;
+      if (footText) footText.textContent = 'Live GitHub profile data · refreshed hourly';
+
+      if (wrap) {
+        wrap.classList.add('github-calendar-wrap');
+        if (!wrap.querySelector('.gh-weekdays')) {
+          const labels = document.createElement('div');
+          labels.className = 'gh-weekdays';
+          labels.setAttribute('aria-hidden', 'true');
+          labels.innerHTML = '<span>Mon</span><span>Wed</span><span>Fri</span>';
+          wrap.insertBefore(labels, grid);
+        }
+      }
+
+      if (months) {
+        months.innerHTML = '';
+        months.classList.add('github-months');
+        const seen = new Set();
+        days.forEach(day => {
+          const date = new Date(`${day.date}T00:00:00Z`);
+          const key = `${date.getUTCFullYear()}-${date.getUTCMonth()}`;
+          if (seen.has(key)) return;
+          seen.add(key);
+          const elapsed = Math.round((date - start) / dayMs);
+          const week = Math.floor(elapsed / 7);
+          const label = document.createElement('span');
+          label.textContent = date.toLocaleString('en-AU', { month: 'short', timeZone: 'UTC' });
+          label.style.setProperty('--gh-col', String(week + 1));
+          months.appendChild(label);
+        });
+      }
+
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+      window.addEventListener('resize', hideTooltip, { passive: true });
+      document.addEventListener('touchend', () => window.setTimeout(hideTooltip, 1200), { passive: true });
+    } catch (error) {
+      console.error('Live GitHub contribution calendar unavailable', error);
+      card?.classList.add('github-error');
+      if (head) head.textContent = 'GitHub contribution activity';
+      if (months) months.innerHTML = '';
+      grid.innerHTML = '<div class="gh-error">Live contribution data is temporarily unavailable. <a href="https://github.com/abdullahak07" target="_blank" rel="noopener">View the real graph on GitHub ↗</a></div>';
+      if (footText) footText.textContent = 'No placeholder data is shown';
     }
-    grid.innerHTML = levels.map(level => `<i class="l${level}"></i>`).join('');
-  }
+  };
+
+  renderGitHubActivity();
 })();
