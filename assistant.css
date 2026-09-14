@@ -63,7 +63,6 @@
 body.ask-open{overflow:hidden}
 @media(min-width:800px){body.ask-open{overflow:auto}}
 
-/* Middle Connect: reveal only the two clean actions, inline and properly scaled. */
 .connect-divider{
   height:auto!important;
   min-height:74px!important;
@@ -99,73 +98,26 @@ body.ask-open{overflow:hidden}
   line-height:1!important;
 }
 .connect-quick-action:hover{border-color:#a9c4ef!important;transform:translateY(-1px)}
-.connect-quick-action>span:not(.connect-quick-icon){
-  display:inline!important;
-  width:auto!important;
-  height:auto!important;
-  margin:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  font-size:18px!important;
-  line-height:1.15!important;
-  white-space:nowrap!important;
-}
-.connect-quick-icon{
-  display:grid!important;
-  place-items:center!important;
-  width:46px!important;
-  height:46px!important;
-  flex:0 0 46px!important;
-  margin:0!important;
-  border-radius:50%!important;
-  background:#e9f1ff!important;
-  color:#1765ff!important;
-}
+.connect-quick-action>span:not(.connect-quick-icon){display:inline!important;width:auto!important;height:auto!important;margin:0!important;border-radius:0!important;background:transparent!important;font-size:18px!important;line-height:1.15!important;white-space:nowrap!important}
+.connect-quick-icon{display:grid!important;place-items:center!important;width:46px!important;height:46px!important;flex:0 0 46px!important;margin:0!important;border-radius:50%!important;background:#e9f1ff!important;color:#1765ff!important}
 .connect-quick-icon svg{width:23px!important;height:23px!important}
 
-/* Bottom-right assistant: icon on the left, label on one line. */
-.connect-button.ask-launcher-trigger{
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:11px!important;
-  width:auto!important;
-  min-width:194px!important;
-  height:60px!important;
-  padding:0 18px!important;
-  white-space:nowrap!important;
-}
-.connect-button.ask-launcher-trigger>span{
-  width:auto!important;
-  height:auto!important;
-  margin:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-}
-.connect-button.ask-launcher-trigger>.ask-trigger-icon{
-  display:grid!important;
-  place-items:center!important;
-  width:38px!important;
-  height:38px!important;
-  flex:0 0 38px!important;
-  border-radius:12px!important;
-  background:#2e7cff!important;
-  color:#fff!important;
-}
+.connect-button.ask-launcher-trigger{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:11px!important;width:auto!important;min-width:194px!important;height:60px!important;padding:0 18px!important;white-space:nowrap!important}
+.connect-button.ask-launcher-trigger>span{width:auto!important;height:auto!important;margin:0!important;border-radius:0!important;background:transparent!important}
+.connect-button.ask-launcher-trigger>.ask-trigger-icon{display:grid!important;place-items:center!important;width:38px!important;height:38px!important;flex:0 0 38px!important;border-radius:12px!important;background:#2e7cff!important;color:#fff!important}
 .connect-button.ask-launcher-trigger .ask-trigger-icon svg{width:21px!important;height:21px!important}
-.connect-button.ask-launcher-trigger>.ask-trigger-label{
-  display:block!important;
-  width:auto!important;
-  color:#fff!important;
-  background:transparent!important;
-  font-size:15px!important;
-  font-weight:800!important;
-  line-height:1!important;
-  white-space:nowrap!important;
-}
+.connect-button.ask-launcher-trigger>.ask-trigger-label{display:block!important;width:auto!important;color:#fff!important;background:transparent!important;font-size:15px!important;font-weight:800!important;line-height:1!important;white-space:nowrap!important}
 
-/* Always render the real portrait image; never hide it behind a CSS background. */
+/* Single canonical portrait asset: assets/abdullah-profile.jpeg */
+.hero-profile{width:min(100%,560px);justify-self:center}
 .portrait-circle{
+  width:min(100%,560px)!important;
+  aspect-ratio:1/1!important;
+  margin:0 auto!important;
+  padding:0!important;
+  border:6px solid #e6eaf0!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
   background:#e6eaf0!important;
 }
 .portrait-circle img{
@@ -174,9 +126,10 @@ body.ask-open{overflow:hidden}
   display:block!important;
   width:100%!important;
   height:100%!important;
-  border-radius:50%!important;
+  max-width:none!important;
+  border-radius:0!important;
   object-fit:cover!important;
-  object-position:center center!important;
+  object-position:center 70%!important;
   image-rendering:auto!important;
 }
 
@@ -189,5 +142,7 @@ body.ask-open{overflow:hidden}
   .connect-quick-panel{width:calc(100% - 24px);gap:10px}
   .connect-quick-action{width:min(100%,320px)!important;min-width:0!important}
   .connect-button.ask-launcher-trigger{right:14px!important;bottom:14px!important;min-width:176px!important;height:56px!important;padding:0 15px!important}
+  .hero-profile{width:min(100%,520px)}
+  .portrait-circle{width:min(92vw,520px)!important}
 }
 @media(prefers-reduced-motion:reduce){.ask-panel,.ask-suggestion{transition:none}.ask-status i{animation:none}}
