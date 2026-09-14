@@ -38,7 +38,7 @@ LINKS / CONTACT
 - GitHub: https://github.com/abdullahak07
 - Google Scholar: https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en
 - Email: aahmad607@gmail.com
-- Website CV: /cv.html
+- Website CV: /cv
 
 RULES FOR ANSWERING
 - Answer only from the verified profile above.
