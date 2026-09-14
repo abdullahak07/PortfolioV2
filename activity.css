@@ -6,9 +6,10 @@
   grid-template-columns:repeat(var(--gh-weeks,53),11px)!important;
   column-gap:3px!important;
   align-items:end!important;
+  width:max-content!important;
   min-width:max-content!important;
-  margin:0 0 7px 35px!important;
-  padding:0!important;
+  margin:0 auto 7px!important;
+  padding:0 0 0 35px!important;
   color:#57606a!important;
   font-size:11px!important;
   line-height:1!important;
@@ -24,6 +25,9 @@
   grid-template-columns:28px max-content;
   gap:7px;
   align-items:start;
+  width:max-content;
+  max-width:100%;
+  margin:0 auto;
   overflow-x:auto;
   overflow-y:visible;
   padding:2px 2px 9px;
@@ -99,7 +103,14 @@
 }
 .gh-error a{color:#0969da;font-weight:700}
 @media(max-width:700px){
-  .activity-months.github-months{margin-left:35px!important}
-  .heatmap-wrap.github-calendar-wrap{padding-bottom:12px}
+  .activity-months.github-months{
+    margin:0 0 7px!important;
+    padding-left:35px!important;
+  }
+  .heatmap-wrap.github-calendar-wrap{
+    width:100%;
+    margin:0;
+    padding-bottom:12px;
+  }
   .activity-card.is-live .activity-head strong{font-size:19px}
 }
