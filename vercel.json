@@ -1,6 +1,18 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "images": {
+    "sizes": [320, 480, 640, 828, 1080],
+    "qualities": [60, 75, 85],
+    "formats": ["image/avif", "image/webp"],
+    "minimumCacheTTL": 2678400,
+    "localPatterns": [
+      {
+        "pathname": "^/assets/.*$",
+        "search": ""
+      }
+    ]
+  },
   "redirects": [
     {
       "source": "/index.html",
