@@ -10,7 +10,7 @@
 
   addStylesheet('university-logos.css?v=2');
   addStylesheet('footer-icons.css?v=2');
-  addStylesheet('assistant.css?v=4');
+  addStylesheet('assistant.css?v=5');
   addStylesheet('activity.css?v=1');
 
   const assistantScript = document.createElement('script');
@@ -18,16 +18,16 @@
   assistantScript.async = true;
   document.head.appendChild(assistantScript);
 
-  /* Use the mountain photo supplied in this conversation, never the old GitHub portrait. */
+  /* Use only the uploaded canonical portrait asset. No API route, avatar or fallback. */
   const portraitImage = document.querySelector('.portrait-circle img');
   if (portraitImage) {
-    portraitImage.src = '/api/profile?v=5';
+    portraitImage.src = 'assets/abdullah-profile.jpeg?v=1';
     portraitImage.removeAttribute('srcset');
     portraitImage.style.opacity = '1';
     portraitImage.style.visibility = 'visible';
     portraitImage.style.display = 'block';
     portraitImage.style.objectFit = 'cover';
-    portraitImage.style.objectPosition = 'center center';
+    portraitImage.style.objectPosition = 'center 70%';
   }
 
   const universities = {
