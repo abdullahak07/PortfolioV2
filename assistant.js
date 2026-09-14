@@ -7,6 +7,26 @@
   const fileIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16h16V8l-6-6Zm0 0v6h6M8 13h8M8 17h6"/></svg>';
   const downloadIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>';
 
+  /* Responsive Vercel-optimized delivery while preserving the original asset as the canonical source. */
+  const profileImage = document.querySelector('.portrait-circle img');
+  if (profileImage) {
+    const optimized = width => `/_vercel/image?url=%2Fassets%2Fabdullah-profile.jpeg&w=${width}&q=75`;
+    profileImage.src = optimized(640);
+    profileImage.srcset = `${optimized(320)} 320w, ${optimized(480)} 480w, ${optimized(640)} 640w, ${optimized(828)} 828w`;
+    profileImage.sizes = '(max-width: 700px) 82vw, 560px';
+    profileImage.decoding = 'async';
+    profileImage.fetchPriority = 'high';
+  }
+
+  /* script.js runs before this async assistant and only recognises cv.html; retain icon treatment for the clean /cv slug. */
+  const cleanCvSocial = document.querySelector('.socials a[href="/cv"]');
+  if (cleanCvSocial && !cleanCvSocial.querySelector('svg')) {
+    cleanCvSocial.textContent = '';
+    cleanCvSocial.setAttribute('aria-label', 'CV');
+    cleanCvSocial.title = 'CV';
+    cleanCvSocial.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 0v6h6M8 13h8M8 17h6"/></svg><span class="social-label">CV</span>';
+  }
+
   const suggestions = [
     'What does Abdullah research?',
     'Tell me about his PhD',
