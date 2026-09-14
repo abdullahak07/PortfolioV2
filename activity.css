@@ -62,6 +62,7 @@
 }
 .github-live-grid .gh-day{
   appearance:none;
+  position:relative;
   width:var(--gh-cell);
   height:var(--gh-cell);
   min-width:var(--gh-cell);
@@ -70,10 +71,12 @@
   margin:0;
   border:1px solid rgba(27,31,36,.06);
   border-radius:3px;
-  cursor:default;
+  cursor:pointer;
   outline:none;
+  touch-action:manipulation;
 }
 .github-live-grid .gh-day:focus-visible{box-shadow:0 0 0 2px #0969da;z-index:2}
+.github-live-grid .gh-day:hover{box-shadow:0 0 0 1px rgba(9,105,218,.6);z-index:2}
 .github-live-grid .gh-day.l0,.activity-foot .l0{background:#ebedf0!important}
 .github-live-grid .gh-day.l1,.activity-foot .l1{background:#9be9a8!important}
 .github-live-grid .gh-day.l2,.activity-foot .l2{background:#40c463!important}
@@ -120,11 +123,11 @@
   .activity-card.is-live .activity-head strong{font-size:19px}
 }
 
-/* iPhone/mobile hardening — loaded after the base + assistant styles. */
+/* iPhone/mobile hardening — full-year view remains LIVE and tappable. */
 @media(max-width:700px){
   html,body{overflow-x:hidden!important}
 
-  /* Prevent sticky navigation from covering section headings. */
+  /* Prevent navigation from covering section headings. */
   .site-header{position:relative!important;top:auto!important}
   section[id]{scroll-margin-top:12px!important}
   .content{padding-left:18px!important;padding-right:18px!important}
@@ -133,9 +136,9 @@
   .section-heading h2{font-size:30px!important;line-height:1.08!important}
   .section-heading p{font-size:14px!important;line-height:1.5!important}
 
-  /* Full-year GitHub graph fits the card instead of showing only the first months. */
+  /* Full-year GitHub graph: fit the year without turning it into a static image. */
   .activity-card{
-    --gh-cell:4px!important;
+    --gh-cell:clamp(3.8px,1.25vw,5px)!important;
     --gh-gap:1px!important;
     padding:16px!important;
     border-radius:18px!important;
@@ -177,14 +180,58 @@
     height:var(--gh-cell)!important;
     min-width:var(--gh-cell)!important;
     min-height:var(--gh-cell)!important;
-    border-radius:1px!important;
+    border-radius:1.5px!important;
+    cursor:pointer!important;
+    -webkit-tap-highlight-color:transparent;
   }
-  .activity-foot{margin-top:10px!important;font-size:9px!important}
+  /* Slightly enlarge the touch-sensitive area without changing the visual grid. */
+  .github-live-grid .gh-day::after{
+    content:"";
+    position:absolute;
+    inset:-1px;
+  }
+  .github-live-grid .gh-day:active{
+    transform:scale(1.55);
+    box-shadow:0 0 0 1px #0969da;
+    z-index:5;
+  }
+  .activity-foot{margin-top:10px!important;gap:8px!important;font-size:9px!important}
   .activity-foot span:last-child{gap:4px!important}
   .activity-foot i{width:11px!important;height:11px!important}
 
-  /* No giant persistent tooltip on touchscreens. Desktop hover remains unchanged. */
-  .gh-tooltip{display:none!important}
+  /* Mobile interaction: tap a contribution square and show the real GitHub detail as a compact toast. */
+  .gh-tooltip{
+    display:block!important;
+    position:fixed!important;
+    left:50%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:max(78px,calc(env(safe-area-inset-bottom) + 68px))!important;
+    width:min(360px,calc(100vw - 28px))!important;
+    max-width:none!important;
+    padding:10px 13px!important;
+    border-radius:10px!important;
+    background:#24292f!important;
+    color:#fff!important;
+    font-size:12px!important;
+    line-height:1.35!important;
+    opacity:0!important;
+    transform:translate(-50%,8px)!important;
+    transition:opacity .12s ease,transform .12s ease!important;
+    pointer-events:none!important;
+  }
+  .gh-tooltip.visible{
+    opacity:1!important;
+    transform:translate(-50%,0)!important;
+  }
+  .activity-card.is-live::after{
+    content:"Tap a square for contribution details";
+    display:block;
+    margin-top:10px;
+    color:#66758d;
+    font-size:9px;
+    font-weight:600;
+  }
 
   /* Make the assistant launcher non-obstructive on phones. */
   body .connect-button.ask-launcher-trigger{
@@ -219,8 +266,10 @@
 }
 
 @media(max-width:380px){
-  .activity-card{--gh-cell:3.7px!important;--gh-gap:.8px!important}
+  .activity-card{--gh-cell:clamp(3.6px,1.2vw,4.3px)!important;--gh-gap:.8px!important}
   .activity-months.github-months{font-size:6.5px!important}
 }
 
-@media(hover:none), (pointer:coarse){.gh-tooltip{display:none!important}}
+@media(hover:none), (pointer:coarse){
+  .github-live-grid .gh-day{cursor:pointer!important}
+}
