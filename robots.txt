@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://abdullahhv2.vercel.app/sitemap.xml
+Sitemap: https://abdullah.com.au/sitemap.xml
