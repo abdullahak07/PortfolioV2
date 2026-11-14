@@ -2,9 +2,22 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "images": {
-    "sizes": [320, 480, 640, 828, 1080],
-    "qualities": [60, 75, 85],
-    "formats": ["image/avif", "image/webp"],
+    "sizes": [
+      320,
+      480,
+      640,
+      828,
+      1080
+    ],
+    "qualities": [
+      60,
+      75,
+      85
+    ],
+    "formats": [
+      "image/avif",
+      "image/webp"
+    ],
     "minimumCacheTTL": 2678400,
     "localPatterns": [
       {
@@ -49,6 +62,22 @@
         {
           "key": "X-Frame-Options",
           "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.google.com https://*.gstatic.com; connect-src 'self' https://github-contributions-api.jogruber.de; upgrade-insecure-requests"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "X-Permitted-Cross-Domain-Policies",
+          "value": "none"
         }
       ]
     },
