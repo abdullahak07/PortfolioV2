@@ -35,6 +35,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=30" />
+  <link rel="stylesheet" href="demo-design.css?v=1" />
 
   <script type="application/ld+json">
   {
@@ -120,14 +121,15 @@
     <section id="home" class="hero section-bg" data-section>
       <div class="content hero-grid">
         <div class="hero-copy">
+          <span class="hero-kicker">Machine unlearning · Multimodal AI · Trustworthy systems</span>
           <h1>Hi, I’m Abdullah</h1>
           <p>I am a <strong>final-stage PhD researcher in Computer Science at Murdoch University</strong>, working on machine unlearning, multimodal AI and trustworthy vision-language systems.</p>
           <p>I’m particularly interested in <strong>selective forgetting, model auditing, recovery attacks and reliable evaluation</strong>. My work asks a simple question: when a model appears to forget, what evidence shows that the information is actually gone?</p>
           <p>Alongside the PhD, I teach university courses across <strong>artificial intelligence, intelligent systems, cyber threat intelligence, network security and cryptography</strong>.</p>
           <p>I also build reproducible research software, interactive teaching tools and applied AI systems that make technical ideas easier to inspect and use.</p>
           <div class="hero-links">
-            <a href="#research">Explore research ↓</a>
-            <a href="/cv">View CV ↗</a>
+            <a class="hero-link-primary" href="#research">Explore research</a>
+            <a href="/cv">View CV</a>
             <a href="https://scholar.google.com/citations?user=CXdZEF0AAAAJ&hl=en" target="_blank" rel="me noopener">Google Scholar ↗</a>
           </div>
         </div>
@@ -276,6 +278,39 @@
           <article class="skill-card"><div class="skill-icon">⌁</div><h3>Machine Unlearning</h3><p>Designing and auditing methods that remove targeted behaviour while protecting retained capability.</p><h4>WHAT I WORK ON</h4><ul><li>Selective forgetting</li><li>Recovery attacks</li><li>Membership inference</li><li>Durability evaluation</li></ul></article>
           <article class="skill-card"><div class="skill-icon">⌬</div><h3>Multimodal AI</h3><p>Vision-language systems, representation analysis and trustworthy multimodal model evaluation.</p><h4>WHAT I WORK ON</h4><ul><li>Vision-language models</li><li>Representation auditing</li><li>Multimodal robustness</li><li>Metric reliability</li></ul></article>
           <article class="skill-card"><div class="skill-icon">›_</div><h3>Research Engineering</h3><p>Building the tooling around experiments and turning research ideas into reproducible systems.</p><h4>WHAT I WORK ON</h4><ul><li>PyTorch + Hugging Face</li><li>Experiment pipelines</li><li>Statistical evaluation</li><li>Interactive research demos</li></ul></article>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="faq" class="section demo-faq-section" data-section>
+      <div class="content demo-faq-grid">
+        <div class="section-heading demo-faq-intro">
+          <span class="demo-section-kicker">Research & collaboration</span>
+          <h2>Quick answers</h2>
+          <p>A compact overview for researchers, students and potential collaborators visiting the site for the first time.</p>
+        </div>
+        <div class="demo-faq-list">
+          <details>
+            <summary>What is Abdullah currently researching?</summary>
+            <p>Machine unlearning for multimodal and vision-language models, with a focus on reliable evaluation, residual knowledge, recovery attacks and selective forgetting.</p>
+          </details>
+          <details>
+            <summary>What makes the work different from standard unlearning evaluation?</summary>
+            <p>The research looks beyond output accuracy alone and asks whether apparently forgotten information can still be recovered, inferred or detected inside model representations.</p>
+          </details>
+          <details>
+            <summary>Where can I find code and research artifacts?</summary>
+            <p>The Interactive Research section links directly to public repositories, preprints and live research systems. The GitHub activity panel also reflects current public engineering work.</p>
+          </details>
+          <details>
+            <summary>Is Abdullah open to research collaboration?</summary>
+            <p>Yes. Relevant areas include trustworthy AI, multimodal learning, machine unlearning, model auditing and reproducible evaluation.</p>
+          </details>
+          <details>
+            <summary>What does Abdullah teach?</summary>
+            <p>Current teaching spans artificial intelligence, intelligent systems, cyber threat intelligence, network security and cryptography.</p>
+          </details>
         </div>
       </div>
     </section>
